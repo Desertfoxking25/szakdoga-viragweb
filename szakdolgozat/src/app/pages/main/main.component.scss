@@ -1,0 +1,23 @@
+h1 {
+    text-align: center;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.login-btn, .reg-btn {
+    font-size: 20px; 
+    padding: 15px 30px; 
+    background-color: blue; 
+    color: white; 
+    border: none;
+    border-radius: 5px; 
+    cursor: pointer; 
+}
+
+.login-btn:hover, .reg-btn:hover {
+    background-color: blueviolet; 
+}
