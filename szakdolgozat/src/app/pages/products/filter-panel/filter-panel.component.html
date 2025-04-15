@@ -1,0 +1,10 @@
+<div class="filter-panel">
+    <h3>Kulcsszavak</h3>
+  
+    <div class="filter-section">
+      <label>Ár: {{ priceRange[0] }} – {{ priceRange[1] }} Ft</label>
+      <input type="range" min="0" max="10000" [(ngModel)]="priceRange[0]" (change)="onPriceChange(priceRange[0], priceRange[1])">
+      <input type="range" min="0" max="10000" [(ngModel)]="priceRange[1]" (change)="onPriceChange(priceRange[0], priceRange[1])">
+    </div>
+  
+  </div>

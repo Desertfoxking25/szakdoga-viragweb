@@ -1,0 +1,45 @@
+<nav class="navbar">
+  <a routerLink="/" class="logo">🌿 Webshop</a>
+
+  <div class="nav-actions">
+    <form (submit)="onSearchSubmit()" class="search-wrapper">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (input)="onSearchInput()"
+        placeholder="Keresés..."
+        name="search" />
+    
+      <ul class="suggestions" *ngIf="suggestions.length > 0">
+        <li *ngFor="let product of suggestions" (click)="goToProduct(product)">
+          <img [src]="product.imgUrl" alt="" />
+          <span>{{ product.name }}</span>
+          <span class="price">{{ product.price | currency:'HUF':'symbol':'1.0-0' }}</span>
+        </li>
+      </ul>
+    </form>
+  
+    <div class="menu-wrapper">
+      <button class="menu-button" (click)="toggleMenu()">
+        <span class="material-icons">menu</span>
+      </button>
+
+      <ul *ngIf="isMenuOpen" class="dropdown-menu">
+        <ng-container *ngIf="!isLoggedIn">
+          <li><a routerLink="/login">Bejelentkezés</a></li>
+        </ng-container>
+        <ng-container *ngIf="isLoggedIn">
+          <li><a routerLink="/profile">Profilom</a></li>
+        </ng-container>
+        <li><a routerLink="/offers">Akciók</a></li>
+        <li><a routerLink="/new">Újdonságok</a></li>
+        <li><a routerLink="/cart">Kosár</a></li>
+        <li><a routerLink="/tips">Kertészeti tippek</a></li>
+        <li><a routerLink="/faq">GYIK</a></li>
+        <ng-container *ngIf="isLoggedIn">
+          <li><a (click)="logout()">Kijelentkezés</a></li>
+        </ng-container>
+      </ul>
+    </div>
+  </div>
+</nav>

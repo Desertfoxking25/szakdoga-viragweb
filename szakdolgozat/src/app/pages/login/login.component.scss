@@ -51,3 +51,19 @@
 .home-btn:hover {
   background-color: darkgray;
 }
+
+.register-link {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  text-align: center;
+
+  a {
+    color: #3b7a57;
+    font-weight: bold;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

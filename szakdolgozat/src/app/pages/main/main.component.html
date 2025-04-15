@@ -1,5 +1,19 @@
-<h1>Üdvözlünk a szakdolgozati projekt főoldalán!</h1>
-<div  class="button-container">
-    <button class="login-btn" (click)="goToLogin()">Bejelentkezés</button>
-    <button class="reg-btn" (click)="goToRegister()">Regisztráció</button>
+<div class="main-container">
+  <div class="category-grid">
+    <div class="category-card" *ngFor="let category of categories" [routerLink]="['/products']" [queryParams]="{ category: category.name }" style="cursor: pointer;">
+      <img [src]="category.imageUrl" [alt]="category.name" />
+      <h3>{{ category.name }}</h3>
+    </div>
+  </div>
 </div>
+
+<footer class="footer">
+  <div class="social-icons">
+    <!-- ikonok itt -->
+  </div>
+  <div class="footer-links">
+    <div><h4>Használati esetek</h4><p>UI design</p><p>UX design</p></div>
+    <div><h4>Felfedezés</h4><p>Dizájn</p><p>Prototípus</p></div>
+    <div><h4>Források</h4><p>Blog</p><p>Legjobb gyakorlatok</p></div>
+  </div>
+</footer>

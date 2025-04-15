@@ -12,26 +12,43 @@ import { provideAuth, getAuth } from '@angular/fire/auth';
 import { environment } from "../environments/environment";
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
+import { MenuComponent } from "./shared/menu/menu.component";
+import { ProfileComponent } from "./pages/profile/profile.component";
+import { CommonModule } from "@angular/common";
+import { ProductsComponent } from "./pages/products/products.component";
+import { FilterPanelComponent } from "./pages/products/filter-panel/filter-panel.component";
+import { registerLocaleData } from '@angular/common';
+import localeHu from '@angular/common/locales/hu';
+import { LOCALE_ID } from '@angular/core';
+import { ProductDetailComponent } from "./pages/products/product-detail/product-detail.component";
 
 @NgModule({
     declarations: [
         AppComponent,
         MainComponent,
         LoginComponent,
-        RegisterComponent
+        RegisterComponent,
+        ProfileComponent,
+        MenuComponent,
+        ProductsComponent,
+        FilterPanelComponent,
+        ProductDetailComponent
     ],
     imports: [
-        BrowserModule,
-        AppRoutingModule,
-        FormsModule,
-        AngularFireModule.initializeApp(environment.firebase),
-        AngularFireAuthModule
-    ],
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule,
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireAuthModule,
+    CommonModule
+],
     providers: [
         provideFirebaseApp(() => initializeApp(environment.firebase)),
         provideAuth(() => getAuth()),
-        provideFirestore(() => getFirestore())
+        provideFirestore(() => getFirestore()),
+        {provide: LOCALE_ID, useValue: 'hu-HU'}
     ],
     bootstrap: [AppComponent],
 })
 export class AppModule {}
+registerLocaleData(localeHu);

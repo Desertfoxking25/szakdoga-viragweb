@@ -1,0 +1,26 @@
+.filter-panel {
+    background: #f8f8f8;
+    padding: 1rem;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 250px;
+  
+    h3 {
+      margin-bottom: 1rem;
+    }
+  
+    .filter-section {
+      margin-bottom: 1.5rem;
+  
+      label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 0.3rem;
+      }
+  
+      input[type="text"],
+      input[type="range"] {
+        width: 100%;
+      }
+    }
+}

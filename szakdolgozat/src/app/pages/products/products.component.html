@@ -1,0 +1,21 @@
+<div class="products-layout">
+    <app-filter-panel
+      (keywordChanged)="onKeywordChanged($event)"
+      (priceRangeChanged)="onPriceRangeChanged($event)">
+    </app-filter-panel>
+    
+    <div class="products-container">
+      <div class="products-grid">
+        <div
+          class="product-card"
+          *ngFor="let product of filteredProducts"
+          [routerLink]="['/product', product.slug]"
+          style="cursor: pointer;">
+          <img [src]="product.imgUrl" alt="{{ product.name }}">
+          <h3>{{ product.name }}</h3>
+          <p>{{ product.price | currency:'HUF':'symbol':'1.0-0' }}</p>
+          <button (click)="$event.stopPropagation()">Kosárba</button>
+        </div>
+      </div>
+    </div>
+</div>

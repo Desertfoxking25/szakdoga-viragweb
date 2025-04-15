@@ -1,0 +1,11 @@
+<div *ngIf="product" class="product-detail">
+    <div class="image-container">
+      <img [src]="product.imgUrl" [alt]="product.name" />
+    </div>
+    <div class="info">
+      <h2>{{ product.name }}</h2>
+      <p class="price">{{ product.price | currency:'HUF':'symbol':'1.0-0' }}</p>
+      <p class="description">{{ product.description }}</p>
+      <button>Kosárba</button>
+    </div>
+</div>
