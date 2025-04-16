@@ -19,6 +19,10 @@ export class MainComponent implements OnInit {
     {
       name: 'Könnyen gondozható növények',
       imageUrl: 'https://firebasestorage.googleapis.com/v0/b/flowershop-szakdoga.firebasestorage.app/o/konnyengond.png?alt=media&token=18f7448f-4878-4309-af90-f1113ba0ed5d'
+    },
+    {
+      name: 'Fűszernövények',
+      imageUrl: 'https://firebasestorage.googleapis.com/v0/b/flowershop-szakdoga.firebasestorage.app/o/fuszernovenyek.png?alt=media&token=8a28418e-8987-421b-927a-66e062b63ae7'
     }
   ];
 

@@ -14,7 +14,7 @@
           <img [src]="product.imgUrl" alt="{{ product.name }}">
           <h3>{{ product.name }}</h3>
           <p>{{ product.price | currency:'HUF':'symbol':'1.0-0' }}</p>
-          <button (click)="$event.stopPropagation()">Kosárba</button>
+          <button (click)="$event.stopPropagation(); addToCart(product)">Kosárba</button>
         </div>
       </div>
     </div>

@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Product } from '../../shared/models/product.model';
 import { ProductService } from '../../shared/services/product.service';
 import { ActivatedRoute } from '@angular/router';
+import { Auth } from '@angular/fire/auth';
+import { CartService } from '../../shared/services/cart.service';
 
 
 @Component({
@@ -19,7 +21,12 @@ export class ProductsComponent implements OnInit {
   keyword: string = '';
   priceRange: [number, number] = [0, 10000];
 
-  constructor(private productService: ProductService, private route: ActivatedRoute) {}
+  constructor(
+    private productService: ProductService, 
+    private route: ActivatedRoute,
+    private cartService: CartService,
+    private auth: Auth
+  ) {}
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
@@ -56,5 +63,24 @@ export class ProductsComponent implements OnInit {
   
       return matchesCategory || matchesKeyword;
     });
+  }
+
+  async addToCart(product: Product) {
+    const user = this.auth.currentUser;
+    if (!user) {
+      alert('Kérlek, jelentkezz be a kosár használatához!');
+      return;
+    }
+  
+    const item = {
+      productId: product.id!,
+      name: product.name,
+      price: product.price,
+      imgUrl: product.imgUrl,
+      quantity: 1
+    };
+  
+    await this.cartService.addToCart(user.uid, item);
+    alert('Termék hozzáadva a kosárhoz!');
   }
 }

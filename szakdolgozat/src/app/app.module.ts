@@ -21,6 +21,7 @@ import { registerLocaleData } from '@angular/common';
 import localeHu from '@angular/common/locales/hu';
 import { LOCALE_ID } from '@angular/core';
 import { ProductDetailComponent } from "./pages/products/product-detail/product-detail.component";
+import { CartComponent } from "./pages/cart/cart.component";
 
 @NgModule({
     declarations: [
@@ -32,7 +33,8 @@ import { ProductDetailComponent } from "./pages/products/product-detail/product-
         MenuComponent,
         ProductsComponent,
         FilterPanelComponent,
-        ProductDetailComponent
+        ProductDetailComponent,
+        CartComponent
     ],
     imports: [
     BrowserModule,

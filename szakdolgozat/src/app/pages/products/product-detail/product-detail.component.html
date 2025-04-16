@@ -6,6 +6,6 @@
       <h2>{{ product.name }}</h2>
       <p class="price">{{ product.price | currency:'HUF':'symbol':'1.0-0' }}</p>
       <p class="description">{{ product.description }}</p>
-      <button>Kosárba</button>
+      <button (click)="addToCart(product)">Kosárba</button>
     </div>
 </div>

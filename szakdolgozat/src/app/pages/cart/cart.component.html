@@ -1,0 +1,24 @@
+<div class="cart-container" *ngIf="cartItems.length > 0; else emptyCart">
+    <h2>Kosarad</h2>
+    <div class="cart-item" *ngFor="let item of cartItems">
+      <img [src]="item.imgUrl" alt="{{ item.name }}">
+      <div class="info">
+        <h3>{{ item.name }}</h3>
+        <p>{{ item.price | currency:'HUF':'symbol':'1.0-0' }}</p>
+        <div class="quantity-controls">
+          <button (click)="decreaseQuantity(item)">-</button>
+          <span>{{ item.quantity }}</span>
+          <button (click)="increaseQuantity(item)">+</button>
+        </div>
+        <button class="remove" (click)="removeItem(item)">❌ Törlés</button>
+      </div>
+    </div>
+  
+    <div class="total">
+      <strong>Végösszeg:</strong> {{ total | currency:'HUF':'symbol':'1.0-0' }}
+    </div>
+</div>
+  
+<ng-template #emptyCart>
+    <p>A kosarad jelenleg üres.</p>
+</ng-template>
