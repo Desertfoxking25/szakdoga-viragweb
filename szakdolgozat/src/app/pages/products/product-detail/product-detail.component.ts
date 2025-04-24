@@ -5,6 +5,7 @@ import { ProductService } from '../../../shared/services/product.service';
 import { CartService } from '../../../shared/services/cart.service';
 import { Auth } from '@angular/fire/auth';
 
+declare let gtag: Function;
 
 @Component({
   selector: 'app-product-detail',
@@ -35,6 +36,16 @@ export class ProductDetailComponent implements OnInit {
         this.product = product;
       });
     }
+
+    gtag('event', 'view_item', {
+      currency: 'HUF',
+      value: this.product?.price,
+      items: [{
+        item_name: this.product?.name,
+        item_id: this.product?.id || this.product?.slug,
+        price: this.product?.price
+      }]
+    });
   }
 
   async addToCart(product: Product) {

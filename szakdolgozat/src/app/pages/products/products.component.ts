@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Auth } from '@angular/fire/auth';
 import { CartService } from '../../shared/services/cart.service';
 
+declare let gtag: Function;
 
 @Component({
   selector: 'app-products',
@@ -138,6 +139,18 @@ export class ProductsComponent implements OnInit {
     };
   
     await this.cartService.addToCart(user.uid, item);
+
+    gtag('event', 'add_to_cart', {
+      currency: 'HUF',
+      value: product.price,
+      items: [{
+        item_name: product.name,
+        item_id: product.id || product.slug,
+        price: product.price,
+        quantity: 1
+      }]
+    });
+
     alert('Termék hozzáadva a kosárhoz!');
   }
 }

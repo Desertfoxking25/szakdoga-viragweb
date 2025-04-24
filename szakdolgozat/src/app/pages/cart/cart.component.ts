@@ -9,6 +9,8 @@ import { UserService } from '../../shared/services/user.service';
 import { UserProfile } from '../../shared/models/user.model';
 import emailjs from 'emailjs-com';
 
+declare let gtag: Function;
+
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.component.html',
@@ -82,6 +84,18 @@ export class CartComponent implements OnInit {
     this.sendConfirmationEmail(order, data.email);
     await this.cartService.clearCart(user.uid);
 
+    gtag('event', 'purchase', {
+      transaction_id: Math.floor(Math.random() * 1000000),
+      value: this.total,
+      currency: 'HUF',
+      items: this.cartItems.map(item => ({
+        item_name: item.name,
+        item_id: item.productId,
+        price: item.price,
+        quantity: item.quantity
+      }))
+    });
+    
     this.cartItems = [];
     this.showModal = false;
 

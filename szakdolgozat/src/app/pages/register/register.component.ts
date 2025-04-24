@@ -3,6 +3,8 @@ import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
 import { Firestore, doc, setDoc } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 
+declare let gtag: Function;
+
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
@@ -39,7 +41,10 @@ export class RegisterComponent {
         avatarUrl: ''
       });
 
-      this.router.navigate(['/profile']);
+      this.router.navigate(['/']);
+      gtag('event', 'sign_up', {
+        method: 'email'
+      });
     } catch (err: any) {
       this.error = err.message;
     }

@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { Auth, signInWithEmailAndPassword } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 
+declare let gtag: Function;
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -20,6 +22,9 @@ export class LoginComponent {
         console.log('Bejelentkezés sikeres:', userCredential);
         alert("Sikeres bejelentkezés!");
         this.router.navigate(['/']);
+        gtag('event', 'login', {
+          method: 'email'
+        });
       })
       .catch(error => {
         console.error('Hiba a bejelentkezés során:', error);
