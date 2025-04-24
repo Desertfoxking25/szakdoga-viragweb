@@ -48,3 +48,88 @@
       }
     }
 }
+.average-rating {
+  margin: 16px 0;
+
+  .stars {
+    font-size: 1.5rem;
+  }
+
+  .avg-text {
+    margin-left: 8px;
+    color: #666;
+    font-size: 1rem;
+  }
+
+  .stars span {
+    color: #ccc;
+
+    &.full {
+      color: #f1c40f;
+    }
+
+    &.half {
+      background: linear-gradient(90deg, #f1c40f 50%, #ccc 50%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  }
+}
+
+.latest-reviews {
+  margin-top: 32px;
+
+  .review-list {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .review {
+    border: 1px solid #ddd;
+    padding: 16px;
+    width: 250px;
+    border-radius: 8px;
+  }
+
+  .stars.small {
+    font-size: 1.2rem;
+
+    span {
+      color: #ccc;
+
+      &.filled {
+        color: #f1c40f;
+      }
+    }
+  }
+
+  .meta {
+    font-size: 0.8rem;
+    color: #888;
+    margin-top: 8px;
+
+    .name {
+      font-weight: bold;
+      margin-right: 8px;
+    }
+  }
+}
+.stars.interactive {
+  font-size: 1.5rem;
+  cursor: pointer;
+
+  span {
+    color: #ccc;
+    transition: color 0.2s;
+
+    &.filled {
+      color: #f1c40f;
+    }
+
+    &:hover {
+      color: #f1c40f;
+    }
+  }
+}

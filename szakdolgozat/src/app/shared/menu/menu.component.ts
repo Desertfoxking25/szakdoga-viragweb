@@ -30,9 +30,17 @@ export class MenuComponent {
   }
 
   logout() {
-    this.auth.signOut().then(() => {
-      this.router.navigate(['/login']);
-    });
+    const currentUrl = this.router.url;
+
+  this.auth.signOut().then(() => {
+    if (currentUrl.startsWith('/profile')) {
+      this.router.navigate(['/']);
+    } else {
+      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        this.router.navigateByUrl(currentUrl);
+      });
+    }
+  });
   }
 
   onSearchInput() {

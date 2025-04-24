@@ -9,3 +9,57 @@
       <button (click)="addToCart(product)">Kosárba</button>
     </div>
 </div>
+
+<p>Átlag értékelés:</p>
+<div class="average-rating">
+  <div class="stars precise-stars">
+    <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
+      <span
+        [ngClass]="{
+          'full': star <= Math.floor(averageRating),
+          'half': star > Math.floor(averageRating) && star - averageRating < 1,
+          'empty': star > averageRating
+        }"
+      >★</span>
+    </ng-container>
+    <span class="avg-text">({{ averageRating.toFixed(1) }} / 5)</span>
+  </div>
+  <small>{{ ratingCount }} értékelés alapján</small>
+</div>
+
+<div *ngIf="userId" class="submit-review">
+  <h4>Értékelésed</h4>
+
+  <div class="stars interactive">
+    <ng-container *ngFor="let star of [1,2,3,4,5]">
+      <span 
+        (mouseenter)="hoveredRating = star"
+        (mouseleave)="hoveredRating = 0"
+        (click)="setUserRating(star)"
+        [class.filled]="star <= (hoveredRating || userRating ?? 0)"
+      >★</span>
+    </ng-container>
+  </div>
+
+  <textarea [(ngModel)]="userReviewText" placeholder="Írd le a véleményed..." rows="3"></textarea>
+  <button (click)="submitRating()">Küldés</button>
+</div>
+
+<div class="latest-reviews" *ngIf="ratings.length > 0">
+  <h3>Legutóbbi értékelések</h3>
+
+  <div class="review-list">
+    <div class="review" *ngFor="let rating of ratings">
+      <div class="stars small">
+        <ng-container *ngFor="let star of [1,2,3,4,5]">
+          <span [class.filled]="star <= rating.stars">★</span>
+        </ng-container>
+      </div>
+      <p *ngIf="rating.reviewText">{{ rating.reviewText }}</p>
+      <div class="meta">
+        <span class="name">{{ authorMap[rating.userId] }}</span>
+        <span class="date">{{ rating.createdAt.toDate() | date:'mediumDate' }}</span>
+      </div>
+    </div>
+  </div>
+</div>
