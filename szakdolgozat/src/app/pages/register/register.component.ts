@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { AuthService } from '../../shared/services/auth.service';
+import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
+import { Firestore, doc, setDoc } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 
 @Component({
@@ -9,23 +10,38 @@ import { Router } from '@angular/router';
   standalone: false
 })
 export class RegisterComponent {
-  email: string = '';
-  password: string = '';
+  lastname = '';
+  firstname = '';
+  email = '';
+  password = '';
+  confirmPassword = '';
+  error = '';
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private auth: Auth, private firestore: Firestore, private router: Router) {}
 
-  onSubmit() {
-    this.authService.register(this.email, this.password).then(() => {
-      console.log('Sikeres regisztráció');
-      alert('Sikeres regisztráció!');
-      this.router.navigate(['/login']);
-    }).catch(error => {
-      console.error('Hiba a regisztráció során:', error);
-      alert('Hiba a regisztráció során: ' + error.message);
-    });
-  }
+  async register() {
+    if (this.password !== this.confirmPassword) {
+      this.error = 'A jelszavak nem egyeznek!';
+      return;
+    }
 
-  goToMain() {
-    this.router.navigate(['/']);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(this.auth, this.email, this.password);
+      const uid = userCredential.user.uid;
+
+      await setDoc(doc(this.firestore, 'users', uid), {
+        uid,
+        lastname: this.lastname,
+        firstname: this.firstname,
+        email: this.email,
+        phone: '',
+        address: '',
+        avatarUrl: ''
+      });
+
+      this.router.navigate(['/profile']);
+    } catch (err: any) {
+      this.error = err.message;
+    }
   }
 }

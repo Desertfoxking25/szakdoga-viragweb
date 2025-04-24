@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Product } from '../../shared/models/product.model';
 import { ProductService } from '../../shared/services/product.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Auth } from '@angular/fire/auth';
 import { CartService } from '../../shared/services/cart.service';
 
@@ -16,14 +16,16 @@ export class ProductsComponent implements OnInit {
   products: Product[] = [];
   filteredProducts: Product[] = [];
   categoryFilter: string | null = null;
-  
+  salesOnly: boolean = false;
+  featuredOnly: boolean = false;
 
-  keyword: string = '';
-  priceRange: [number, number] = [0, 10000];
+  keywordList: string[] = [];
+  priceRange: [number, number] = [0, 30000];
 
   constructor(
     private productService: ProductService, 
     private route: ActivatedRoute,
+    private router: Router,
     private cartService: CartService,
     private auth: Auth
   ) {}
@@ -31,17 +33,32 @@ export class ProductsComponent implements OnInit {
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       this.categoryFilter = params['category'] || null;
-      this.keyword = (params['search'] || '').toLowerCase();
+      
+      this.keywordList = [];
+      if (params['search']) {
+        this.keywordList = params['search'].split(',').map((s: string) => s.trim().toLowerCase());
+      }
   
       this.productService.getProducts().subscribe(products => {
         this.products = products;
         this.applyFilters();
       });
     });
+
+    this.route.url.subscribe(url => {
+      const isAkcio = url.some(segment => segment.path === 'discounts');
+      this.salesOnly = isAkcio;
+
+      const isUjdonsag = url.some(segment => segment.path === 'features');
+      this.featuredOnly = isUjdonsag;
+    });
   }
 
   onKeywordChanged(keyword: string) {
-    this.keyword = keyword.toLowerCase();
+    const k = keyword.trim().toLowerCase();
+    if (k && !this.keywordList.includes(k)) {
+      this.keywordList.push(k);
+    }
     this.applyFilters();
   }
 
@@ -53,16 +70,56 @@ export class ProductsComponent implements OnInit {
   applyFilters() {
     this.filteredProducts = this.products.filter(product => {
       const matchesCategory = this.categoryFilter
-        ? product.category.includes(this.categoryFilter!)
+        ? product.category.some(cat => cat.toLowerCase().includes(this.categoryFilter!.toLowerCase()))
         : true;
   
-      const matchesKeyword = this.keyword
-        ? product.name.toLowerCase().includes(this.keyword) ||
-          product.category.some(cat => cat.toLowerCase().includes(this.keyword))
+      const matchesKeyword = this.keywordList.length > 0
+        ? this.keywordList.some(k =>
+            product.name.toLowerCase().includes(k) ||
+            product.category.some(cat => cat.toLowerCase().includes(k))
+          )
         : true;
-  
-      return matchesCategory || matchesKeyword;
+
+      const matchesSales = this.salesOnly ? product.sales === true : true;
+      const matchesFeatured = this.featuredOnly ? product.featured === true : true;
+      const matchesPrice = product.price >= this.priceRange[0] && product.price <= this.priceRange[1];
+
+      return matchesCategory && matchesKeyword && matchesSales && matchesFeatured && matchesPrice;
     });
+  }
+
+  clearCategoryFilter() {
+    this.categoryFilter = null;
+    this.applyFilters();
+
+    const queryParams: any = {};
+    if (this.keywordList.length > 0) queryParams.search = this.keywordList.join(',');
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: queryParams,
+      replaceUrl: true,
+    });
+  }
+
+  resetPriceRange() {
+    this.priceRange = [0, 30000];
+    this.applyFilters();
+  }
+
+  removeKeyword(keyword: string) {
+    this.keywordList = this.keywordList.filter(k => k !== keyword);
+  this.applyFilters();
+
+  const queryParams: any = {};
+  if (this.categoryFilter) queryParams.category = this.categoryFilter;
+  if (this.keywordList.length > 0) queryParams.search = this.keywordList.join(',');
+
+  this.router.navigate([], {
+    relativeTo: this.route,
+    queryParams: queryParams,
+    replaceUrl: true,
+  });
   }
 
   async addToCart(product: Product) {

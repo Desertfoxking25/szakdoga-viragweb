@@ -3,8 +3,24 @@
   
     <div class="filter-section">
       <label>Ár: {{ priceRange[0] }} – {{ priceRange[1] }} Ft</label>
-      <input type="range" min="0" max="10000" [(ngModel)]="priceRange[0]" (change)="onPriceChange(priceRange[0], priceRange[1])">
-      <input type="range" min="0" max="10000" [(ngModel)]="priceRange[1]" (change)="onPriceChange(priceRange[0], priceRange[1])">
+      <input type="range" min="0" max="30000" [(ngModel)]="priceRange[0]" (change)="onPriceChange(priceRange[0], priceRange[1])">
+      <input type="range" min="0" max="30000" [(ngModel)]="priceRange[1]" (change)="onPriceChange(priceRange[0], priceRange[1])">
     </div>
-  
-  </div>
+
+    <div class="active-tags">
+      <span *ngIf="categoryFilter" class="filter-tag">
+        {{ categoryFilter }}
+        <button (click)="removeCategoryFilter.emit()">×</button>
+      </span>
+    
+      <span *ngFor="let keyword of keywordList" class="filter-tag">
+        "{{ keyword }}"
+        <button (click)="removeKeywordFilter.emit(keyword)">×</button>
+      </span>
+    
+      <span *ngIf="priceRange[0] > 0 || priceRange[1] < 30000" class="filter-tag">
+        Ár: {{ priceRange[0] }}–{{ priceRange[1] }} Ft
+        <button (click)="resetPriceFilter.emit()">×</button>
+      </span>
+    </div>
+</div>

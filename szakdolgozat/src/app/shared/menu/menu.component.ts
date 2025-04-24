@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Auth, onAuthStateChanged } from '@angular/fire/auth';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Product } from '../models/product.model';
 import { ProductService } from '../services/product.service';
 
@@ -18,7 +18,7 @@ export class MenuComponent {
   searchTerm: string = '';
   suggestions: Product[] = [];
 
-  constructor(private router: Router, private productService: ProductService) {
+  constructor(private router: Router, private productService: ProductService, private route: ActivatedRoute) {
     this.auth = inject(Auth); 
     onAuthStateChanged(this.auth, (user) => {
       this.isLoggedIn = !!user;
@@ -50,9 +50,23 @@ export class MenuComponent {
 
   onSearchSubmit() {
     if (this.searchTerm.trim().length > 0) {
-      this.router.navigate(['/products'], {
-        queryParams: { search: this.searchTerm.trim() }
-      });
+      const currentParams = { ...this.route.snapshot.queryParams };
+      const currentKeywords = currentParams['search']
+        ? currentParams['search'].split(',').map((s: string) => s.trim().toLowerCase())
+        : [];
+  
+      const newKeyword = this.searchTerm.trim().toLowerCase();
+  
+      if (!currentKeywords.includes(newKeyword)) {
+        currentKeywords.push(newKeyword);
+      }
+  
+      const updatedParams = {
+        ...currentParams,
+        search: currentKeywords.join(',')
+      };
+  
+      this.router.navigate(['/products'], { queryParams: updatedParams });
       this.searchTerm = '';
       this.suggestions = [];
     }

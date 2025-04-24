@@ -1,13 +1,14 @@
-<div class="profile-container" *ngIf="user; else notLoggedIn">
-    <h2>Profil</h2>
-    <p><strong>Email:</strong> {{ user.email }}</p>
-  
-    <!-- Később ide jöhet még név/jelszó módosítás -->
-  
-    <button (click)="logout()">Kijelentkezés</button>
-  </div>
-  
-  <ng-template #notLoggedIn>
+<div class="profile-container" *ngIf="profile">
+  <h2>Profilom</h2>
+  <p><strong>Név:</strong> {{ profile.lastname }} {{ profile.firstname }}</p>
+  <p><strong>Email:</strong> {{ profile.email }}</p>
+  <p><strong>Telefonszám:</strong> {{ profile.phone || 'Nincs megadva' }}</p>
+  <p><strong>Szállítási cím:</strong> {{ profile.address || 'Nincs megadva' }}</p>
+
+  <button (click)="editProfile()">✏️ Profil módosítása</button>
+  <button (click)="logout()">Kijelentkezés</button>
+</div>
+
+<ng-template #notLoggedIn>
     <p>Nem vagy bejelentkezve.</p>
-  </ng-template>
-  
+</ng-template>

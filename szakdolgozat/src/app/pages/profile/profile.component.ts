@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { getAuth, User } from 'firebase/auth';
+import { Auth, getAuth } from '@angular/fire/auth';
+import { Router } from '@angular/router';
+import { UserProfile } from '../../shared/models/user.model';
+import { UserService } from '../../shared/services/user.service';
 
 @Component({
   selector: 'app-profile',
@@ -8,11 +11,21 @@ import { getAuth, User } from 'firebase/auth';
   standalone: false
 })
 export class ProfileComponent implements OnInit {
-  user: User | null = null;
+  profile: UserProfile | null = null;
+
+  constructor(private auth: Auth, private userService: UserService, private router: Router) {}
 
   ngOnInit(): void {
-    const auth = getAuth();
-    this.user = auth.currentUser;
+    const user = this.auth.currentUser;
+    if (user) {
+      this.userService.getUserProfile(user.uid).subscribe(data => {
+        this.profile = data;
+      });
+    }
+  }
+
+  editProfile() {
+    this.router.navigate(['/profile/edit']);
   }
 
   logout() {

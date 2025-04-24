@@ -1,0 +1,23 @@
+<div class="profile-edit-container">
+    <h2>Profil szerkesztése</h2>
+  
+    <form (ngSubmit)="saveProfile()">
+      <label>Vezetéknév</label>
+      <input type="text" [(ngModel)]="profile.lastname" name="lastname"/>
+
+      <label>Keresztnév</label>
+      <input type="text" [(ngModel)]="profile.firstname" name="firstname"/>
+  
+      <label>Email (nem módosítható)</label>
+      <input type="email" [(ngModel)]="profile.email" name="email" disabled />
+  
+      <label>Telefonszám</label>
+      <input type="text" [(ngModel)]="profile.phone" name="phone" placeholder="+36..."/>
+  
+      <label>Szállítási cím</label>
+      <textarea [(ngModel)]="profile.address" name="address" placeholder="Dugonics tér 13, 6720 Szeged"></textarea>
+  
+      <button type="submit">Mentés</button>
+      <button type="button" (click)="goBack()">Vissza a profilhoz</button>
+    </form>
+</div>

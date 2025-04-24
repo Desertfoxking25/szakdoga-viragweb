@@ -1,3 +1,11 @@
+<app-order-modal
+  *ngIf="showModal"
+  [total]="total"
+  [userId]="userId"
+  (close)="showModal = false"
+  (confirm)="handleOrderConfirm($event)"
+></app-order-modal>
+
 <div class="cart-container" *ngIf="cartItems.length > 0; else emptyCart">
     <h2>Kosarad</h2>
     <div class="cart-item" *ngFor="let item of cartItems">
@@ -16,6 +24,10 @@
   
     <div class="total">
       <strong>Végösszeg:</strong> {{ total | currency:'HUF':'symbol':'1.0-0' }}
+    </div>
+
+    <div *ngIf="cartItems.length > 0" class="checkout">
+      <button (click)="showModal = true">🛒 Rendelés leadása</button>
     </div>
 </div>
   

@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, Input } from '@angular/core';
 
 @Component({
   selector: 'app-filter-panel',
@@ -7,15 +7,16 @@ import { Component, Output, EventEmitter } from '@angular/core';
   standalone: false
 })
 export class FilterPanelComponent {
-  @Output() keywordChanged = new EventEmitter<string>();
+  @Input() categoryFilter: string | null = null;
+  @Input() keywordList: string[] = [];
+  @Input() priceRange: [number, number] = [0, 30000];
+
   @Output() priceRangeChanged = new EventEmitter<[number, number]>();
+  @Output() removeCategoryFilter = new EventEmitter<void>();
+  @Output() removeKeywordFilter = new EventEmitter<string>();
+  @Output() resetPriceFilter = new EventEmitter<void>();
 
-  keyword: string = '';
-  priceRange: [number, number] = [0, 10000];
-
-  onKeywordInput() {
-    this.keywordChanged.emit(this.keyword);
-  }
+  searchInput: string = '';
 
   onPriceChange(min: number, max: number) {
     if (min > max) {

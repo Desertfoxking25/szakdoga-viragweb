@@ -22,6 +22,10 @@ import localeHu from '@angular/common/locales/hu';
 import { LOCALE_ID } from '@angular/core';
 import { ProductDetailComponent } from "./pages/products/product-detail/product-detail.component";
 import { CartComponent } from "./pages/cart/cart.component";
+import { FaqComponent } from "./pages/faq/faq.component";
+import { TipComponent } from "./pages/tip/tip.component";
+import { ProfileEditComponent } from "./pages/profile/profile-edit/profile-edit.component";
+import { OrderModalComponent } from "./pages/cart/order-modal/order-modal.component";
 
 @NgModule({
     declarations: [
@@ -34,7 +38,11 @@ import { CartComponent } from "./pages/cart/cart.component";
         ProductsComponent,
         FilterPanelComponent,
         ProductDetailComponent,
-        CartComponent
+        CartComponent,
+        FaqComponent,
+        TipComponent,
+        ProfileEditComponent,
+        OrderModalComponent
     ],
     imports: [
     BrowserModule,

@@ -62,4 +62,9 @@ export class CartService {
       await setDoc(ref, { items });
     }
   }
+
+  async clearCart(userId: string): Promise<void> {
+    const ref = doc(this.firestore, 'carts', userId);
+    await setDoc(ref, { items: [] });
+  }
 }

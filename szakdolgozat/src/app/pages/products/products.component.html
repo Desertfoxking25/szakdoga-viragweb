@@ -1,7 +1,12 @@
 <div class="products-layout">
     <app-filter-panel
-      (keywordChanged)="onKeywordChanged($event)"
-      (priceRangeChanged)="onPriceRangeChanged($event)">
+      (priceRangeChanged)="onPriceRangeChanged($event)"
+      [categoryFilter]="categoryFilter"
+      [keywordList]="keywordList"
+      (removeKeywordFilter)="removeKeyword($event)"
+      [priceRange]="priceRange"
+      (removeCategoryFilter)="clearCategoryFilter()"
+      (resetPriceFilter)="resetPriceRange()">
     </app-filter-panel>
     
     <div class="products-container">
