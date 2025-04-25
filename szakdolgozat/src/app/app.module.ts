@@ -26,6 +26,7 @@ import { FaqComponent } from "./pages/faq/faq.component";
 import { TipComponent } from "./pages/tip/tip.component";
 import { ProfileEditComponent } from "./pages/profile/profile-edit/profile-edit.component";
 import { OrderModalComponent } from "./pages/cart/order-modal/order-modal.component";
+import { AdminModule } from './pages/admin/admin.module';
 
 @NgModule({
     declarations: [
@@ -50,7 +51,8 @@ import { OrderModalComponent } from "./pages/cart/order-modal/order-modal.compon
     FormsModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
-    CommonModule
+    CommonModule,
+    AdminModule
 ],
     providers: [
         provideFirebaseApp(() => initializeApp(environment.firebase)),

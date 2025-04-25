@@ -38,7 +38,8 @@ export class RegisterComponent {
         email: this.email,
         phone: '',
         address: '',
-        avatarUrl: ''
+        avatarUrl: '',
+        admin: false
       });
 
       this.router.navigate(['/']);

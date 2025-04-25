@@ -1,0 +1,44 @@
+<h2 mat-dialog-title>{{ data.mode === 'create' ? 'Új termék' : 'Termék szerkesztése' }}</h2>
+<mat-dialog-content>
+  <form>
+    <mat-form-field appearance="fill" class="w-100">
+      <mat-label>Név</mat-label>
+      <input matInput [(ngModel)]="product.name" name="name">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-100">
+      <mat-label>Ár (Ft)</mat-label>
+      <input type="number" matInput [(ngModel)]="product.price" name="price">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-100">
+      <mat-label>Kategóriák (vesszővel)</mat-label>
+      <input matInput [(ngModel)]="categoryString" name="category">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-100">
+      <mat-label>Kép URL</mat-label>
+      <input matInput [(ngModel)]="product.imgUrl" name="imgUrl">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-100">
+      <mat-label>Slug</mat-label>
+      <input matInput [(ngModel)]="product.slug" name="slug">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-100">
+      <mat-label>Leírás</mat-label>
+      <textarea matInput [(ngModel)]="product.description" name="description" rows="4"></textarea>
+    </mat-form-field>
+
+    <div style="display: flex; gap: 16px; margin-top: 16px;">
+      <mat-checkbox [(ngModel)]="product.sales" name="sales">Akciós</mat-checkbox>
+      <mat-checkbox [(ngModel)]="product.featured" name="featured">Kiemelt</mat-checkbox>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">Mégse</button>
+  <button mat-raised-button color="primary" (click)="save()">Mentés</button>
+</mat-dialog-actions>

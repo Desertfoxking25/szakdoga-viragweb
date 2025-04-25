@@ -9,6 +9,11 @@ import { Observable } from 'rxjs';
 export class UserService {
   constructor(private firestore: Firestore) {}
 
+  getUserById(uid: string): Observable<any> {
+    const userDoc = doc(this.firestore, `users/${uid}`);
+    return docData(userDoc);
+  }
+
   getUserProfile(uid: string): Observable<UserProfile> {
     const userRef = doc(this.firestore, 'users', uid);
     return docData(userRef) as Observable<UserProfile>;

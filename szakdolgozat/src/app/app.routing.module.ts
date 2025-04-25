@@ -13,11 +13,15 @@ import { TipComponent } from "./pages/tip/tip.component";
 import { ProfileEditComponent } from "./pages/profile/profile-edit/profile-edit.component";
 
 const routes: Routes = [
+    {
+      path: 'admin',
+      loadChildren: () => import('./pages/admin/admin.module').then(m => m.AdminModule)
+    },
     { path: '', component: MainComponent },
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
-    { path: 'profile/edit', component: ProfileEditComponent },
+    { path: 'profile/edit', component: ProfileEditComponent, canActivate: [AuthGuard] },
     { path: 'products', component: ProductsComponent },
     { path: 'product/:slug', component: ProductDetailComponent },
     { path: 'products/discounts', component: ProductsComponent },

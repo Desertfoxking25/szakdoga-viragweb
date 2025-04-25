@@ -12,6 +12,6 @@
       <p>{{ tip.content }}</p>
       <small>{{ authorMap[tip.authorId] }} </small>
       <small *ngIf="tip.createdAt">{{ tip.createdAt.toDate() | date:'medium' }}</small>
-      <button *ngIf="tip.authorId === currentUserId" (click)="deleteTip(tip.id!)">❌</button>
+      <button *ngIf="tip.authorId === currentUserId || isAdmin" (click)="deleteTip(tip)">❌</button>
     </div>
 </div>

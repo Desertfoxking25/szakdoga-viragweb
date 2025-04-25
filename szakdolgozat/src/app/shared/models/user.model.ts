@@ -6,4 +6,5 @@ export interface UserProfile {
     phone?: string;
     address?: string;
     avatarUrl?: string;
+    admin?: boolean;
 }

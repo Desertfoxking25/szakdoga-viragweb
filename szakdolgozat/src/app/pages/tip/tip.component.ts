@@ -17,6 +17,7 @@ export class TipComponent implements OnInit {
   authorMap: { [uid: string]: string } = {};
   newTip: Partial<Tip> = { title: '', content: '' };
   currentUserId: string | null = null;
+  isAdmin: boolean = false;
 
   constructor(private tipService: TipService, private userService: UserService, private auth: Auth) {}
 
@@ -24,6 +25,10 @@ export class TipComponent implements OnInit {
     this.auth.onAuthStateChanged(user => {
       if (user) {
         this.currentUserId = user.uid;
+
+        this.userService.getUserProfile(user.uid).subscribe(userData => {
+          this.isAdmin = userData?.admin === true;
+        });
       }
   
       this.tipService.getTips().subscribe(data => {
@@ -63,7 +68,17 @@ export class TipComponent implements OnInit {
     this.newTip = { title: '', content: '' };
   }
 
-  async deleteTip(id: string) {
-    await this.tipService.deleteTip(id);
+  async deleteTip(tip: Tip) {
+    const user = this.auth.currentUser;
+    if (!user) return;
+
+    if (tip.authorId === user.uid || this.isAdmin) {
+      const confirmed = confirm('Biztosan törölni szeretnéd ezt a tippet?');
+      if (confirmed) {
+        await this.tipService.deleteTip(tip.id!);
+      }
+    } else {
+      alert('Nincs jogosultságod törölni ezt a tippet.');
+    }
   }
 }
