@@ -23,21 +23,31 @@
       <button class="menu-button" (click)="toggleMenu()">
         <span class="material-icons">menu</span>
       </button>
-
-      <ul *ngIf="isMenuOpen" class="dropdown-menu">
+      <ul *ngIf="isMenuOpen && isAdminChecked" class="dropdown-menu">
         <ng-container *ngIf="!isLoggedIn">
           <li><a routerLink="/login">Bejelentkezés</a></li>
+          <li><a routerLink="/products/discounts">Akciók</a></li>
+          <li><a routerLink="/products/features">Újdonságok</a></li>
+          <li><a routerLink="/cart">Kosár</a></li>
+          <li><a routerLink="/tips">Kertészeti tippek</a></li>
+          <li><a routerLink="/faq">GYIK</a></li>
         </ng-container>
         <ng-container *ngIf="isLoggedIn">
-          <li><a routerLink="/profile">Profilom</a></li>
-        </ng-container>
-        <li><a routerLink="/products/discounts">Akciók</a></li>
-        <li><a routerLink="/products/features">Újdonságok</a></li>
-        <li><a routerLink="/cart">Kosár</a></li>
-        <li><a routerLink="/tips">Kertészeti tippek</a></li>
-        <li><a routerLink="/faq">GYIK</a></li>
-        <ng-container *ngIf="isLoggedIn">
-          <li><a (click)="logout()">Kijelentkezés</a></li>
+          <ng-container *ngIf="isAdmin; else normalUserMenu">
+            <li><a routerLink="/admin/products">Termékek</a></li>
+            <li><a routerLink="/admin/orders">Rendelések</a></li>
+            <li><a routerLink="/tips">Kertészeti tippek</a></li>
+            <li><a (click)="logout()">Kijelentkezés</a></li>
+          </ng-container>
+          <ng-template #normalUserMenu>
+            <li><a routerLink="/profile">Profilom</a></li>
+            <li><a routerLink="/products/discounts">Akciók</a></li>
+            <li><a routerLink="/products/features">Újdonságok</a></li>
+            <li><a routerLink="/cart">Kosár</a></li>
+            <li><a routerLink="/tips">Kertészeti tippek</a></li>
+            <li><a routerLink="/faq">GYIK</a></li>
+            <li><a (click)="logout()">Kijelentkezés</a></li>
+          </ng-template>
         </ng-container>
       </ul>
     </div>

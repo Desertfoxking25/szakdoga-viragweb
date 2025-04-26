@@ -1,9 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Auth, onAuthStateChanged } from '@angular/fire/auth';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Product } from '../models/product.model';
 import { ProductService } from '../services/product.service';
-
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-menu',
@@ -11,17 +11,35 @@ import { ProductService } from '../services/product.service';
   styleUrl: './menu.component.scss',
   standalone: false
 })
-export class MenuComponent {
+export class MenuComponent implements OnInit {
   isMenuOpen = false;
   isLoggedIn = false;
+  isAdmin: boolean = false;
+  isAdminChecked: boolean = false;
   private auth: Auth;
   searchTerm: string = '';
   suggestions: Product[] = [];
 
-  constructor(private router: Router, private productService: ProductService, private route: ActivatedRoute) {
+  constructor(private router: Router, private productService: ProductService, private route: ActivatedRoute, private userService: UserService) {
     this.auth = inject(Auth); 
     onAuthStateChanged(this.auth, (user) => {
       this.isLoggedIn = !!user;
+    });
+  }
+
+  ngOnInit(): void {
+    this.auth.onAuthStateChanged(user => {
+      if (user) {
+        this.isLoggedIn = true;
+        this.userService.getUserProfile(user.uid).subscribe(userData => {
+          this.isAdmin = userData?.admin === true;
+          this.isAdminChecked = true; 
+        });
+      } else {
+        this.isLoggedIn = false;
+        this.isAdmin = false;
+        this.isAdminChecked = true;
+      }
     });
   }
 

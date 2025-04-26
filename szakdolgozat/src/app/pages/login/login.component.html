@@ -8,6 +8,7 @@
       <input type="password" id="password" [(ngModel)]="password" name="password" required>
       
       <button class="login-btn" type="submit">Bejelentkezés</button>
+      <button (click)="googleLogin()">Belépés Google fiókkal</button>
     </form>
     <p class="register-link">Nincs még fiókod?
       <a routerLink="/register">Regisztrálj itt!</a>
