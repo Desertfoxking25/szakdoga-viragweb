@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Product } from '../../shared/models/product.model';
 import { ProductService } from '../../shared/services/product.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Auth } from '@angular/fire/auth';
 import { CartService } from '../../shared/services/cart.service';
+import { FilterPanelComponent } from './filter-panel/filter-panel.component';
 
 declare let gtag: Function;
 
@@ -19,9 +20,13 @@ export class ProductsComponent implements OnInit {
   categoryFilter: string | null = null;
   salesOnly: boolean = false;
   featuredOnly: boolean = false;
-
+  addedToCart: boolean[] = [];
   keywordList: string[] = [];
-  priceRange: [number, number] = [0, 30000];
+  priceRange: [number, number] = [0, 20000];
+  loadedImages: boolean[] = [];
+  @ViewChild(FilterPanelComponent) filterPanel!: FilterPanelComponent;
+  pageSize = 8;
+  currentPage = 1;
 
   constructor(
     private productService: ProductService, 
@@ -53,6 +58,40 @@ export class ProductsComponent implements OnInit {
       const isUjdonsag = url.some(segment => segment.path === 'features');
       this.featuredOnly = isUjdonsag;
     });
+    this.loadedImages = new Array(this.filteredProducts.length).fill(false);
+  }
+
+  get visiblePages(): number[] {
+    const pages: number[] = [];
+    const total = this.totalPages;
+  
+    if (total <= 3) {
+      for (let i = 1; i <= total; i++) {
+        pages.push(i);
+      }
+    } else if (this.currentPage === 1) {
+      pages.push(1, 2);
+    } else if (this.currentPage === total) {
+      pages.push(total - 1, total);
+    } else {
+      pages.push(this.currentPage - 1, this.currentPage, this.currentPage + 1);
+    }
+  
+    return pages;
+  }
+
+  get paginatedProducts(): Product[] {
+    const start = (this.currentPage - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    return this.filteredProducts.slice(start, end);
+  }
+  
+  get totalPages(): number {
+    return Math.ceil(this.filteredProducts.length / this.pageSize);
+  }
+
+  onImageLoad(index: number): void {
+    this.loadedImages[index] = true;
   }
 
   onKeywordChanged(keyword: string) {
@@ -83,7 +122,14 @@ export class ProductsComponent implements OnInit {
 
       const matchesSales = this.salesOnly ? product.sales === true : true;
       const matchesFeatured = this.featuredOnly ? product.featured === true : true;
-      const matchesPrice = product.price >= this.priceRange[0] && product.price <= this.priceRange[1];
+
+      const selectedPricePresets = this.filterPanel?.pricePresets?.filter(p => p.selected) || [];
+
+      const matchesPrice = selectedPricePresets.length > 0
+        ? selectedPricePresets.some(p => product.price >= p.min && product.price <= p.max)
+        : product.price >= this.priceRange[0] && product.price <= this.priceRange[1];
+      
+      this.currentPage = 1;
 
       return matchesCategory && matchesKeyword && matchesSales && matchesFeatured && matchesPrice;
     });
@@ -104,7 +150,7 @@ export class ProductsComponent implements OnInit {
   }
 
   resetPriceRange() {
-    this.priceRange = [0, 30000];
+    this.priceRange = [0, 20000];
     this.applyFilters();
   }
 
@@ -123,7 +169,7 @@ export class ProductsComponent implements OnInit {
   });
   }
 
-  async addToCart(product: Product) {
+  async addToCart(product: Product, index: number, event?: MouseEvent) {
     const user = this.auth.currentUser;
     if (!user) {
       alert('Kérlek, jelentkezz be a kosár használatához!');
@@ -151,6 +197,19 @@ export class ProductsComponent implements OnInit {
       }]
     });
 
-    alert('Termék hozzáadva a kosárhoz!');
+    this.addedToCart[index] = true;
+
+    if (event) {
+      const button = (event.target as HTMLElement);
+      button.classList.add('added');
+    }
+    setTimeout(() => {
+      this.addedToCart[index] = false;
+  
+      if (event) {
+        const button = (event.target as HTMLElement);
+        button.classList.remove('added');
+      }
+    }, 1500);
   }
 }

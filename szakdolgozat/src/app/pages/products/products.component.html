@@ -13,13 +13,36 @@
       <div class="products-grid">
         <div
           class="product-card"
-          *ngFor="let product of filteredProducts"
+          *ngFor="let product of paginatedProducts; let i = index"
           [routerLink]="['/product', product.slug]"
+          [class.loaded]="loadedImages[i]"
           style="cursor: pointer;">
           <img [src]="product.imgUrl" alt="{{ product.name }}">
           <h3>{{ product.name }}</h3>
-          <p>{{ product.price | currency:'HUF':'symbol':'1.0-0' }}</p>
-          <button (click)="$event.stopPropagation(); addToCart(product)">Kosárba</button>
+          <div class="price-button">
+            <p>{{ product.price | currency:'HUF':'symbol':'1.0-0' }}</p>
+            <button 
+              (click)="$event.stopPropagation(); addToCart(product, i, $event)" 
+              [ngClass]="{ 'added': addedToCart[i] }">
+              {{ addedToCart[i] ? '✅ Hozzáadva' : 'Kosárba' }}
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="pagination-wrapper">
+        <div class="pagination" *ngIf="totalPages > 1">
+          <button (click)="currentPage = 1" [disabled]="currentPage === 1">«</button>
+          <button (click)="currentPage = currentPage - 1" [disabled]="currentPage === 1">‹</button>
+        
+          <button
+            *ngFor="let page of visiblePages"
+            (click)="currentPage = page"
+            [class.active]="currentPage === page">
+            {{ page }}
+          </button>
+        
+          <button (click)="currentPage = currentPage + 1" [disabled]="currentPage === totalPages">›</button>
+          <button (click)="currentPage = totalPages" [disabled]="currentPage === totalPages">»</button>
         </div>
       </div>
     </div>

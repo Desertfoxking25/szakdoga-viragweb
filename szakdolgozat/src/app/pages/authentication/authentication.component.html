@@ -1,0 +1,63 @@
+<body>
+  <div class="container" [ngClass]="{ 'active': isRegisterMode }">
+    <div class="form-box login">
+      <form (ngSubmit)="login()">
+        <h1>Bejelentkezés</h1>
+        <div class="input-box">
+          <input type="email" id="email" [(ngModel)]="email" name="email" placeholder="Email cím" required>
+          <i class='bx bxl-gmail'></i>
+        </div>
+        <div class="input-box">
+          <input type="password" id="password" [(ngModel)]="password" name="password" placeholder="Jelszó" required>
+          <i class='bx bxs-lock' ></i>
+        </div>
+        <button type="submit" class="btn">Bejelentkezés</button>
+        <p>vagy jelentkezz be google fiókkal</p>
+        <div class="social-icons">
+          <a (click)="googleLogin()"><i class='bx bxl-google'></i></a>
+        </div>
+      </form>
+    </div>
+
+    <div class="form-box register">
+      <form (ngSubmit)="register()">
+        <h1>Regisztráció</h1>
+        <div class="input-box">
+          <input type="text" [(ngModel)]="lastname" name="lastname" placeholder="Vezetéknév" required>
+          <i class='bx bxs-user' ></i>
+        </div>
+        <div class="input-box">
+          <input type="text" [(ngModel)]="firstname" name="firstname" placeholder="Keresztnév" required>
+          <i class='bx bxs-user' ></i>
+        </div>
+        <div class="input-box">
+          <input type="email" [(ngModel)]="email" name="email" placeholder="Email cím" required>
+          <i class='bx bxl-gmail'></i>
+        </div>
+        <div class="input-box">
+          <input type="password" [(ngModel)]="password" name="password" placeholder="Jelszó" required>
+          <i class='bx bxs-lock' ></i>
+        </div>
+        <div class="input-box">
+          <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="Jelszó megerősítés" required>
+          <i class='bx bxs-lock' ></i>
+        </div>
+        <div class="error" *ngIf="error">{{ error }}</div>
+        <button type="submit" class="btn">Regisztráció</button>
+      </form>
+    </div>
+
+    <div class="toggle-box">
+        <div class="toggle-panel toggle-left">
+          <h1>Hello, Welcome!</h1>
+          <p>Don't have an account?</p>
+          <button type="button" class="btn register-btn" (click)="switchToRegister()">Regisztráció</button>
+        </div>
+        <div class="toggle-panel toggle-right">
+          <h1>Welcome Back!</h1>
+          <p>Already have an account?</p>
+          <button type="button" class="btn login-btn" (click)="switchToLogin()">Bejelentkezés</button>
+        </div>
+    </div>
+  </div>
+</body>

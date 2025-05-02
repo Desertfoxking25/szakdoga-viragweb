@@ -1,30 +1,38 @@
-<div *ngIf="product" class="product-detail">
+<div class="product-detail-wrapper" *ngIf="product">
+  <div class="image-info">
     <div class="image-container">
       <img [src]="product.imgUrl" [alt]="product.name" />
     </div>
-    <div class="info">
-      <h2>{{ product.name }}</h2>
-      <p class="price">{{ product.price | currency:'HUF':'symbol':'1.0-0' }}</p>
-      <p class="description">{{ product.description }}</p>
-      <button (click)="addToCart(product)">Kosárba</button>
-    </div>
-</div>
 
-<p>Átlag értékelés:</p>
-<div class="average-rating">
-  <div class="stars precise-stars">
-    <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
-      <span
-        [ngClass]="{
-          'full': star <= Math.floor(averageRating),
-          'half': star > Math.floor(averageRating) && star - averageRating < 1,
-          'empty': star > averageRating
-        }"
-      >★</span>
-    </ng-container>
-    <span class="avg-text">({{ averageRating.toFixed(1) }} / 5)</span>
+    <div class="info-container">
+      <h2>{{ product.name }}</h2>
+      <div class="purchase-row">
+        <p class="price">{{ product.price | currency:'HUF':'symbol':'1.0-0' }}</p>
+        <div class="quantity-selector">
+          <button (click)="decreaseQuantity()">−</button>
+          <span>{{ quantity }}</span>
+          <button (click)="increaseQuantity()">+</button>
+        </div>
+        <button class="cart-button" (click)="addToCart(product)">Kosárba</button>
+      </div>
+      <p class="description">{{ product.description }}</p>
+      <div class="average-rating">
+        <div class="stars precise-stars">
+          <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
+            <span
+              [ngClass]="{
+                'full': star <= Math.floor(averageRating),
+                'half': star > Math.floor(averageRating) && star - averageRating < 1,
+                'empty': star > averageRating
+              }"
+            >★</span>
+          </ng-container>
+          <span class="avg-text">({{ averageRating.toFixed(1) }} / 5)</span>
+        </div>
+        <small>{{ ratingCount }} értékelés alapján</small>
+      </div>
+    </div>
   </div>
-  <small>{{ ratingCount }} értékelés alapján</small>
 </div>
 
 <div *ngIf="userId" class="submit-review">
@@ -43,11 +51,17 @@
 
   <textarea [(ngModel)]="userReviewText" placeholder="Írd le a véleményed..." rows="3"></textarea>
   <button (click)="submitRating()">Küldés</button>
+
+  <button 
+    *ngIf="userRating !== null"
+    class="delete-rating-btn"
+    (click)="deleteRating()"
+    title="Értékelés törlése"
+  >×</button>
 </div>
 
-<div class="latest-reviews" *ngIf="ratings.length > 0">
-  <h3>Legutóbbi értékelések</h3>
-
+<div class="latest-reviews-wrapper" *ngIf="ratings.length > 0">
+  <h3 class="latest-reviews-title">Legutóbbi értékelések</h3>
   <div class="review-list">
     <div class="review" *ngFor="let rating of ratings">
       <div class="stars small">

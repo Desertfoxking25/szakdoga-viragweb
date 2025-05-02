@@ -1,12 +1,19 @@
 <nav class="navbar">
-  <a routerLink="/" class="logo">🌿 Webshop</a>
 
-  <div class="nav-actions">
+  <div class="navbar-left">
+    <a routerLink="/" class="logo">
+      <span class="logo-icon">🌿</span>
+      <span class="logo-text">Webshop</span>
+    </a>
+  </div>
+
+  <div class="navbar-center">
     <form (submit)="onSearchSubmit()" class="search-wrapper">
       <input
         type="text"
         [(ngModel)]="searchTerm"
         (input)="onSearchInput()"
+        (focus)="onSearchFocus()"
         placeholder="Keresés..."
         name="search" />
     
@@ -18,38 +25,40 @@
         </li>
       </ul>
     </form>
-  
-    <div class="menu-wrapper">
-      <button class="menu-button" (click)="toggleMenu()">
-        <span class="material-icons">menu</span>
-      </button>
-      <ul *ngIf="isMenuOpen && isAdminChecked" class="dropdown-menu">
-        <ng-container *ngIf="!isLoggedIn">
-          <li><a routerLink="/login">Bejelentkezés</a></li>
-          <li><a routerLink="/products/discounts">Akciók</a></li>
-          <li><a routerLink="/products/features">Újdonságok</a></li>
-          <li><a routerLink="/cart">Kosár</a></li>
-          <li><a routerLink="/tips">Kertészeti tippek</a></li>
-          <li><a routerLink="/faq">GYIK</a></li>
+  </div>
+
+  <div class="navbar-right">
+    <div class="menu-overlay" *ngIf="overlayVisible" [ngClass]="{ 'active': isMenuOpen }" (click)="closeMenu()"></div>
+    <button class="menu-button" (click)="toggleMenu()">
+      <span class="material-icons">menu</span>
+    </button>
+
+    <ul *ngIf="isAdminChecked"  [ngClass]="{ 'dropdown-menu': true, 'open': isMenuOpen }">
+      <ng-container *ngIf="!isLoggedIn">
+        <li><span class="material-icons">login</span> <a routerLink="/authentication" (click)="closeMenu()">Bejelentkezés</a></li>
+        <li><span class="material-icons">login</span> <a routerLink="/products/discounts" (click)="closeMenu()">Akciók</a></li>
+        <li><span class="material-icons">login</span> <a routerLink="/products/features" (click)="closeMenu()">Újdonságok</a></li>
+        <li><span class="material-icons">login</span> <a routerLink="/cart" (click)="closeMenu()">Kosár</a></li>
+        <li><span class="material-icons">login</span> <a routerLink="/tips" (click)="closeMenu()">Kertészeti tippek</a></li>
+        <li><span class="material-icons">login</span> <a routerLink="/faq" (click)="closeMenu()">GYIK</a></li>
+      </ng-container>
+      <ng-container *ngIf="isLoggedIn">
+        <ng-container *ngIf="isAdmin; else normalUserMenu">
+          <li><span class="material-icons">login</span> <a routerLink="/admin/products" (click)="closeMenu()">Termékek</a></li>
+          <li><span class="material-icons">login</span> <a routerLink="/admin/orders" (click)="closeMenu()">Rendelések</a></li>
+          <li><span class="material-icons">login</span> <a routerLink="/tips" (click)="closeMenu()">Kertészeti tippek</a></li>
+          <li><span class="material-icons">login</span> <a (click)="logout(); closeMenu()">Kijelentkezés</a></li>
         </ng-container>
-        <ng-container *ngIf="isLoggedIn">
-          <ng-container *ngIf="isAdmin; else normalUserMenu">
-            <li><a routerLink="/admin/products">Termékek</a></li>
-            <li><a routerLink="/admin/orders">Rendelések</a></li>
-            <li><a routerLink="/tips">Kertészeti tippek</a></li>
-            <li><a (click)="logout()">Kijelentkezés</a></li>
-          </ng-container>
-          <ng-template #normalUserMenu>
-            <li><a routerLink="/profile">Profilom</a></li>
-            <li><a routerLink="/products/discounts">Akciók</a></li>
-            <li><a routerLink="/products/features">Újdonságok</a></li>
-            <li><a routerLink="/cart">Kosár</a></li>
-            <li><a routerLink="/tips">Kertészeti tippek</a></li>
-            <li><a routerLink="/faq">GYIK</a></li>
-            <li><a (click)="logout()">Kijelentkezés</a></li>
-          </ng-template>
-        </ng-container>
-      </ul>
-    </div>
+        <ng-template #normalUserMenu>
+          <li><span class="material-icons">login</span> <a routerLink="/profile" (click)="closeMenu()">Profilom</a></li>
+          <li><span class="material-icons">login</span> <a routerLink="/products/discounts" (click)="closeMenu()">Akciók</a></li>
+          <li><span class="material-icons">login</span> <a routerLink="/products/features" (click)="closeMenu()">Újdonságok</a></li>
+          <li><span class="material-icons">login</span> <a routerLink="/cart" (click)="closeMenu()">Kosár</a></li>
+          <li><span class="material-icons">login</span> <a routerLink="/tips" (click)="closeMenu()">Kertészeti tippek</a></li>
+          <li><span class="material-icons">login</span> <a routerLink="/faq" (click)="closeMenu()">GYIK</a></li>
+          <li><span class="material-icons">login</span> <a (click)="logout(); closeMenu()">Kijelentkezés</a></li>
+        </ng-template>
+      </ng-container>
+    </ul>
   </div>
 </nav>

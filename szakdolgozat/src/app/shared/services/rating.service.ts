@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, collectionData, query, where, addDoc, doc, updateDoc, getDocs } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, query, where, addDoc, doc, updateDoc, getDocs, deleteDoc } from '@angular/fire/firestore';
 import { Rating } from '../models/rating.model';
 import { Timestamp } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
@@ -41,6 +41,7 @@ export class RatingService {
       const ratingDoc = doc(this.firestore, 'ratings', existing.id!);
       await updateDoc(ratingDoc, {
         stars: rating.stars,
+        reviewText: rating.reviewText,
         createdAt: Timestamp.now()
       });
     } else {
@@ -48,6 +49,16 @@ export class RatingService {
         ...rating,
         createdAt: Timestamp.now()
       });
+    }
+  }
+
+  async deleteRating(userId: string, productId: string): Promise<void> {
+    const q = query(this.ratingsRef, where('userId', '==', userId), where('productId', '==', productId));
+    const snapshot = await getDocs(q);
+  
+    if (!snapshot.empty) {
+      const docRef = snapshot.docs[0].ref;
+      await deleteDoc(docRef);
     }
   }
 }

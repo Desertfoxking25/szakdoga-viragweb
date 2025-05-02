@@ -1,50 +1,185 @@
 .products-layout {
   display: flex;
-  gap: 2rem;
+  flex-direction: row;
   align-items: flex-start;
+  gap: 2rem;
+  padding: 2rem;
 }
 
 .products-container {
   flex: 1;
+  margin-top: 2rem;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
 
-  h2 {
-    margin-bottom: 1rem;
-    color: #3b7a57;
+.products-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+}
+
+.product-card {
+  background: var(--card-background);
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem;
+  width: 256px;
+  flex-shrink: 0;
+
+  img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    transition: transform 0.4s ease;
   }
 
-  .products-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  h3 {
+    margin-top: 1rem;
+    font-size: 1.5rem;
+    color: var(--text-color);
+    transition: color 0.3s ease;
+  }
+
+  .price-button {
+    margin-top: auto;
+    width: 100%;
+    display: flex;
+    justify-content: center;
     gap: 2rem;
-  }
-
-  .product-card {
-    background: #fff;
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    text-align: center;
-
-    img {
-      max-width: 100%;
-      height: 160px;
-      object-fit: cover;
-      border-radius: 4px;
-      margin-bottom: 0.5rem;
+    align-items: center;
+    padding-top: 1rem;
+  
+    p {
+      font-size: 1.2rem;
+      color: var(--secondary-text-color);
+      margin: 0;
     }
-
+  
     button {
-      margin-top: 0.5rem;
-      background: #3b7a57;
+      padding: 0.5rem 1rem;
+      background-color: var(--primary-color);
       color: white;
       border: none;
-      padding: 0.4rem 1rem;
-      border-radius: 6px;
+      border-radius: 0.5rem;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      font-size: 1rem;
       cursor: pointer;
-
+      position: relative;
+      overflow: hidden;
+  
       &:hover {
-        background: #2e5d42;
+        background-color: var(--primary-hover-color);
+        transform: scale(1.05);
+      }
+  
+      &:active {
+        animation: buttonClick 0.3s ease forwards;
+      }
+  
+      &.added {
+        background-color: #176120 !important;
       }
     }
+  }
+  
+  &:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+
+    img {
+      transform: scale(1.05);
+    }
+
+    h3 {
+      color: var(--primary-color);
+    }
+  }
+}
+
+.pagination-wrapper {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.pagination {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 2rem;
+  justify-content: center;
+
+  button {
+    padding: 0.4rem 0.8rem;
+    border: none;
+    background-color: #e6f0ec;
+    color: #2e6048;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+
+    &.active {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+@keyframes fadeSlideInProduct {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.product-card {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeSlideInProduct 0.8s ease forwards;
+
+  &.loaded {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes buttonClick {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 768px) {
+  .products-layout {
+    flex-direction: column;
+    padding: 1rem;
   }
 }

@@ -4,8 +4,6 @@ import { AppComponent } from "./app.component";
 import { BrowserModule } from "@angular/platform-browser";
 import { MainComponent } from "./pages/main/main.component";
 import { FormsModule } from "@angular/forms";
-import { LoginComponent } from "./pages/login/login.component";
-import { RegisterComponent } from "./pages/register/register.component";
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from "@angular/fire/firestore";
 import { provideAuth, getAuth } from '@angular/fire/auth';
@@ -27,13 +25,15 @@ import { TipComponent } from "./pages/tip/tip.component";
 import { ProfileEditComponent } from "./pages/profile/profile-edit/profile-edit.component";
 import { OrderModalComponent } from "./pages/cart/order-modal/order-modal.component";
 import { AdminModule } from './pages/admin/admin.module';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { RouterModule } from "@angular/router";
+import { AuthenticationComponent } from "./pages/authentication/authentication.component";
 
 @NgModule({
     declarations: [
         AppComponent,
         MainComponent,
-        LoginComponent,
-        RegisterComponent,
+        AuthenticationComponent,
         ProfileComponent,
         MenuComponent,
         ProductsComponent,
@@ -52,7 +52,9 @@ import { AdminModule } from './pages/admin/admin.module';
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
     CommonModule,
-    AdminModule
+    AdminModule,
+    RouterModule,
+    MatSnackBarModule
 ],
     providers: [
         provideFirebaseApp(() => initializeApp(environment.firebase)),

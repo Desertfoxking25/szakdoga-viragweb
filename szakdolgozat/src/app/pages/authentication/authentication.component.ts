@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { Auth, signInWithEmailAndPassword, User } from '@angular/fire/auth';
+import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, User } from '@angular/fire/auth';
+import { Firestore, doc, setDoc } from '@angular/fire/firestore';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { Router } from '@angular/router';
 import { UserService } from '../../shared/services/user.service';
@@ -7,17 +8,22 @@ import { UserService } from '../../shared/services/user.service';
 declare let gtag: Function;
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
+  selector: 'app-authentication',
+  templateUrl: './authentication.component.html',
+  styleUrls: ['./authentication.component.scss'],
   standalone: false
 })
-export class LoginComponent {
+export class AuthenticationComponent {
   email: string = '';
   password: string = '';
   isAdminLogin: boolean = false;
+  isRegisterMode = false;
+  lastname = '';
+  firstname = '';
+  confirmPassword = '';
+  error = '';
 
-  constructor(private auth: Auth, private router: Router, private userService: UserService) {}
+  constructor(private auth: Auth, private router: Router, private userService: UserService, private firestore: Firestore) {}
 
   login() {
     if (!this.email || !this.password) {
@@ -67,8 +73,46 @@ export class LoginComponent {
         alert('Hiba a Google bejelentkezés során: ' + error.message);
       });
   }
+
+  async register() {
+      if (this.password !== this.confirmPassword) {
+        this.error = 'A jelszavak nem egyeznek!';
+        return;
+      }
+  
+      try {
+        const userCredential = await createUserWithEmailAndPassword(this.auth, this.email, this.password);
+        const uid = userCredential.user.uid;
+  
+        await setDoc(doc(this.firestore, 'users', uid), {
+          uid,
+          lastname: this.lastname,
+          firstname: this.firstname,
+          email: this.email,
+          phone: '',
+          address: '',
+          avatarUrl: '',
+          admin: false
+        });
+  
+        this.router.navigate(['/']);
+        gtag('event', 'sign_up', {
+          method: 'email'
+        });
+      } catch (err: any) {
+        this.error = err.message;
+      }
+    }
   
   goToMain() {
     this.router.navigate(['/']);
+  }
+
+  switchToRegister() {
+    this.isRegisterMode = true;
+  }
+
+  switchToLogin() {
+    this.isRegisterMode = false;
   }
 }

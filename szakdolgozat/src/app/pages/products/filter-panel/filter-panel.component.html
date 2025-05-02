@@ -3,8 +3,18 @@
   
     <div class="filter-section">
       <label>Ár: {{ priceRange[0] }} – {{ priceRange[1] }} Ft</label>
-      <input type="range" min="0" max="30000" [(ngModel)]="priceRange[0]" (change)="onPriceChange(priceRange[0], priceRange[1])">
-      <input type="range" min="0" max="30000" [(ngModel)]="priceRange[1]" (change)="onPriceChange(priceRange[0], priceRange[1])">
+      <input type="range" min="0" max="20000" [(ngModel)]="priceRange[0]" (change)="onPriceChange(priceRange[0], priceRange[1])">
+      <input type="range" min="0" max="20000" [(ngModel)]="priceRange[1]" (change)="onPriceChange(priceRange[0], priceRange[1])">
+    </div>
+
+    <div class="price-checkboxes">
+      <label *ngFor="let preset of pricePresets; let i = index">
+        <input
+          type="checkbox"
+          [checked]="preset.selected"
+          (change)="onCheckboxChange($event, i)">
+        {{ preset.label }}
+      </label>
     </div>
 
     <div class="active-tags">
@@ -17,8 +27,15 @@
         "{{ keyword }}"
         <button (click)="removeKeywordFilter.emit(keyword)">×</button>
       </span>
-    
-      <span *ngIf="priceRange[0] > 0 || priceRange[1] < 30000" class="filter-tag">
+
+      <ng-container *ngFor="let preset of pricePresets; let i = index">
+        <span class="filter-tag" *ngIf="preset.selected">
+          Ár: {{ preset.label }}
+          <button (click)="removePricePreset(i)">×</button>
+        </span>
+      </ng-container>
+
+      <span *ngIf="isSliderPriceActive" class="filter-tag">
         Ár: {{ priceRange[0] }}–{{ priceRange[1] }} Ft
         <button (click)="resetPriceFilter.emit()">×</button>
       </span>

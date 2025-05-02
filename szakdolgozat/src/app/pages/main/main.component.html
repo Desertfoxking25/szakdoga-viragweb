@@ -1,7 +1,15 @@
 <div class="main-container">
   <div class="category-grid">
-    <div class="category-card" *ngFor="let category of categories" [routerLink]="['/products']" [queryParams]="{ category: category.name }" style="cursor: pointer;">
-      <img [src]="category.imageUrl" [alt]="category.name" />
+    <div 
+      class="category-card" 
+      *ngFor="let category of categories; let i = index" 
+      [routerLink]="['/products']" 
+      [queryParams]="{ category: category.name }" 
+      style="cursor: pointer;"
+      [class.loaded]="loadedImages[i]">
+      <img [src]="category.imageUrl" 
+           [alt]="category.name" 
+           (load)="onImageLoad(i)" />
       <h3>{{ category.name }}</h3>
     </div>
   </div>

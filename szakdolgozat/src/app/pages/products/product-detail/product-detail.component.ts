@@ -8,6 +8,7 @@ import { Rating } from '../../../shared/models/rating.model';
 import { UserService } from '../../../shared/services/user.service';
 import { Auth } from '@angular/fire/auth';
 import { Timestamp } from 'firebase/firestore';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 declare let gtag: Function;
@@ -20,6 +21,7 @@ declare let gtag: Function;
 })
 export class ProductDetailComponent implements OnInit {
   product: Product | undefined = undefined;
+  quantity: number = 1;
   userId: string | null = null;
   userRating: number | null = null;
   userReviewText: string = '';
@@ -36,7 +38,8 @@ export class ProductDetailComponent implements OnInit {
     private cartService: CartService,
     private ratingService: RatingService,
     private userService: UserService,
-    private auth: Auth
+    private auth: Auth,
+    private snackBar: MatSnackBar
   ) {}
 
   async ngOnInit() {
@@ -68,8 +71,10 @@ export class ProductDetailComponent implements OnInit {
       }
 
       this.ratingService.getRatingsByProduct(product.id!).subscribe((ratings: Rating[]) => {
-        this.ratings = ratings;
         this.ratingCount = ratings.length;
+        this.ratings = ratings
+          .sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis())
+          .slice(0, 3);
         const total = ratings.reduce((sum, r) => sum + r.stars, 0);
         this.averageRating = total / (ratings.length || 1);
 
@@ -85,10 +90,11 @@ export class ProductDetailComponent implements OnInit {
   }
   
   loadRatings(productId: string) {
-    this.ratingService.getRatingsByProduct(productId).subscribe((ratings: any) => {
-      this.ratings = ratings;
+    this.ratingService.getRatingsByProduct(productId).subscribe((ratings: Rating[]) => {
       this.ratingCount = ratings.length;
-
+      this.ratings = ratings
+        .sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis())
+        .slice(0, 3);
       const total = ratings.reduce((sum: number, r: Rating) => sum + r.stars, 0);
       this.averageRating = total / (ratings.length || 1);
 
@@ -119,13 +125,44 @@ export class ProductDetailComponent implements OnInit {
 
     this.userReviewText = '';
     this.loadRatings(this.product.id!);
-    alert('Értékelésed mentve!');
+    
+    this.snackBar.open('Értékelésed mentve!', 'Bezárás', {
+      duration: 3000, 
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+      panelClass: ['snackbar-success']
+    });
+  }
+
+  async deleteRating() {
+    if (!this.userId || !this.product?.id) return;
+
+    const confirmed = confirm('Biztosan törölni szeretnéd az értékelésed?');
+    if (!confirmed) return;
+  
+    await this.ratingService.deleteRating(this.userId, this.product.id);
+  
+    this.userRating = null;
+    this.userReviewText = '';
+    this.loadRatings(this.product.id);
+  
+    this.snackBar.open('Értékelés törölve.', 'Bezárás', {
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+      panelClass: ['snackbar-success']
+    });
   }
 
   async addToCart(product: Product) {
     const user = this.auth.currentUser;
     if (!user) {
-      alert('Kérlek, jelentkezz be a kosár használatához!');
+      this.snackBar.open('❌ Kérlek, jelentkezz be a kosár használatához!', 'Bezárás', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'bottom',
+        panelClass: ['snackbar-error']
+      });
       return;
     }
   
@@ -134,10 +171,28 @@ export class ProductDetailComponent implements OnInit {
       name: product.name,
       price: product.price,
       imgUrl: product.imgUrl,
-      quantity: 1
+      quantity: this.quantity
     };
   
     await this.cartService.addToCart(user.uid, item);
-    alert('Termék hozzáadva a kosárhoz!');
+
+    this.snackBar.open('✅ Termék hozzáadva a kosárhoz!', 'Bezárás', {
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+      panelClass: ['snackbar-success']
+    });
+
+    this.quantity = 1;
+  }
+
+  increaseQuantity() {
+    this.quantity++;
+  }
+  
+  decreaseQuantity() {
+    if (this.quantity > 1) {
+      this.quantity--;
+    }
   }
 }

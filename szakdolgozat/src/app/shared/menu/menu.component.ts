@@ -13,12 +13,14 @@ import { UserService } from '../services/user.service';
 })
 export class MenuComponent implements OnInit {
   isMenuOpen = false;
+  overlayVisible = false;
   isLoggedIn = false;
   isAdmin: boolean = false;
   isAdminChecked: boolean = false;
   private auth: Auth;
   searchTerm: string = '';
   suggestions: Product[] = [];
+ 
 
   constructor(private router: Router, private productService: ProductService, private route: ActivatedRoute, private userService: UserService) {
     this.auth = inject(Auth); 
@@ -41,10 +43,51 @@ export class MenuComponent implements OnInit {
         this.isAdminChecked = true;
       }
     });
+
+    document.addEventListener('click', (event) => {
+      this.handleDocumentClick(event);
+    });
+  }
+
+  handleDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    
+    const clickedInsideMenuButton = target.closest('.menu-button');
+    const clickedInsideDropdown = target.closest('.dropdown-menu');
+    const clickedInsideSearchWrapper = target.closest('.search-wrapper');
+  
+    if (!clickedInsideMenuButton && !clickedInsideDropdown) {
+      this.isMenuOpen = false;
+    document.body.style.overflow = '';
+    }
+
+    if (!clickedInsideSearchWrapper) {
+      this.suggestions = [];
+    }
   }
 
   toggleMenu() {
-    this.isMenuOpen = !this.isMenuOpen;
+    if (this.isMenuOpen) {
+      this.isMenuOpen = false;
+      document.body.style.overflow = '';
+      
+      setTimeout(() => {
+        this.overlayVisible = false;
+      }, 400);
+    } else {
+      this.isMenuOpen = true;
+      this.overlayVisible = true;
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  closeMenu() {
+    this.isMenuOpen = false;
+    document.body.style.overflow = '';
+
+    setTimeout(() => {
+      this.overlayVisible = false;
+    }, 400);
   }
 
   logout() {
@@ -74,6 +117,17 @@ export class MenuComponent implements OnInit {
     });
   }
 
+  onSearchFocus() {
+    if (this.searchTerm.trim().length > 0) {
+      this.productService.getProducts().subscribe(products => {
+        const keyword = this.searchTerm.toLowerCase();
+        this.suggestions = products.filter(p =>
+          p.name.toLowerCase().includes(keyword)
+        ).slice(0, 10);
+      });
+    }
+  }
+  
   onSearchSubmit() {
     if (this.searchTerm.trim().length > 0) {
       const currentParams = { ...this.route.snapshot.queryParams };
