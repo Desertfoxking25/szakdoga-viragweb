@@ -4,6 +4,7 @@ import { Firestore, doc, setDoc } from '@angular/fire/firestore';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { Router } from '@angular/router';
 import { UserService } from '../../shared/services/user.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 declare let gtag: Function;
 
@@ -23,11 +24,16 @@ export class AuthenticationComponent {
   confirmPassword = '';
   error = '';
 
-  constructor(private auth: Auth, private router: Router, private userService: UserService, private firestore: Firestore) {}
+  constructor(private auth: Auth, private router: Router, private userService: UserService, private firestore: Firestore, private snackBar: MatSnackBar) {}
 
   login() {
     if (!this.email || !this.password) {
-      alert('Kérlek, add meg az e-mail címet és a jelszót!');
+      this.snackBar.open('⚠️ Kérlek, add meg az e-mail címet és a jelszót!', 'Bezárás', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'bottom',
+        panelClass: ['snackbar-error']
+      });
       return;
     }
 
@@ -37,25 +43,39 @@ export class AuthenticationComponent {
   
         if (this.isAdminLogin) {
           const sub = this.userService.getUserById(user.uid).subscribe(userData => {
-            if (userData?.admin === true) {
-              alert('Sikeres admin bejelentkezés!');
+            const isAdmin = userData?.admin === true;
+            this.userService.setIsAdmin(isAdmin); 
+
+            if (this.isAdminLogin && isAdmin) {
               this.router.navigate(['/admin/products']);
             } else {
-              alert('Nincs jogosultságod az admin felülethez!');
               this.router.navigate(['/']);
             }
+            
             gtag('event', 'login', { method: 'email' });
             sub.unsubscribe();
           });
         } else {
-          alert('Sikeres bejelentkezés!');
+          this.snackBar.open('✅ Sikeres bejelentkezés!', 'Bezárás', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'bottom',
+            panelClass: ['snackbar-success']
+          });
           this.router.navigate(['/']);
           gtag('event', 'login', { method: 'email' });
         }
       })
       .catch(error => {
         console.error('Hiba a bejelentkezés során:', error);
-        alert('Hibás e-mail cím vagy jelszó');
+        this.snackBar.open('❌ Hibás e-mail cím vagy jelszó!', 'Bezárás', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom',
+          panelClass: ['snackbar-error']
+        });
+        this.email = '';
+        this.password = '';
       });
   }
 
@@ -64,19 +84,46 @@ export class AuthenticationComponent {
     signInWithPopup(this.auth, provider)
       .then(result => {
         console.log('Google bejelentkezés sikeres:', result.user);
-        alert('Sikeres Google bejelentkezés!');
+        this.snackBar.open('✅ Sikeres bejelentkezés!', 'Bezárás', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom',
+          panelClass: ['snackbar-success']
+        });
         this.router.navigate(['/']);
         gtag('event', 'login', { method: 'Google' });
       })
       .catch(error => {
         console.error('Hiba Google bejelentkezéskor:', error);
-        alert('Hiba a Google bejelentkezés során: ' + error.message);
+        this.snackBar.open('❌ Hiba a Google bejelentkezés során!', 'Bezárás', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom',
+          panelClass: ['snackbar-error']
+        });
       });
   }
 
   async register() {
       if (this.password !== this.confirmPassword) {
-        this.error = 'A jelszavak nem egyeznek!';
+        this.snackBar.open('❌ A jelszavak nem egyeznek!', 'Bezárás', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom',
+          panelClass: ['snackbar-error']
+        });
+        this.password = '';
+        this.confirmPassword = '';
+        return;
+      }
+
+      if (!this.lastname || !this.firestore || !this.email || !this.password || !this.confirmPassword) {
+        this.snackBar.open('⚠️ Kérlek, minden mezőt tölts ki!', 'Bezárás', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom',
+          panelClass: ['snackbar-error']
+        });
         return;
       }
   
@@ -94,13 +141,45 @@ export class AuthenticationComponent {
           avatarUrl: '',
           admin: false
         });
+
+        this.snackBar.open('✅ Sikeres regisztráció!', 'Bezárás', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom',
+          panelClass: ['snackbar-success']
+        });
   
         this.router.navigate(['/']);
-        gtag('event', 'sign_up', {
-          method: 'email'
-        });
+        gtag('event', 'sign_up', { method: 'email'});
+        
       } catch (err: any) {
-        this.error = err.message;
+        let message = 'Ismeretlen hiba történt.';
+
+        switch (err.code) {
+          case 'auth/weak-password':
+            message = 'A jelszónak legalább 6 karakter hosszúnak kell lennie!';
+            this.password = '';
+            this.confirmPassword = '';
+            break;
+          case 'auth/email-already-in-use':
+            message = 'Ez az e-mail cím már használatban van!';
+            this.email = '';
+            break;
+          case 'auth/invalid-email':
+            message = 'Érvénytelen e-mail cím!';
+            this.email = '';
+            break;
+          default:
+            message = err.message;
+            break;
+        }
+
+        this.snackBar.open('❌ ' + message, 'Bezárás', {
+          duration: 4000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom',
+          panelClass: ['snackbar-error']
+        });
       }
     }
   

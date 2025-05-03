@@ -14,7 +14,7 @@
         <div
           class="product-card"
           *ngFor="let product of paginatedProducts; let i = index"
-          [routerLink]="['/product', product.slug]"
+          [routerLink]="['/products', product.slug]"
           [class.loaded]="loadedImages[i]"
           style="cursor: pointer;">
           <img [src]="product.imgUrl" alt="{{ product.name }}">

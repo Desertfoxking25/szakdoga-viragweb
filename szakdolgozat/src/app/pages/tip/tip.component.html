@@ -6,12 +6,18 @@
       <textarea placeholder="Tipp leírása" [(ngModel)]="newTip.content" name="content" required></textarea>
       <button type="submit">Beküldés</button>
     </form>
-  
-    <div class="tip" *ngFor="let tip of tips">
-      <h3>{{ tip.title }}</h3>
-      <p>{{ tip.content }}</p>
-      <small>{{ authorMap[tip.authorId] }} </small>
-      <small *ngIf="tip.createdAt">{{ tip.createdAt.toDate() | date:'medium' }}</small>
-      <button *ngIf="tip.authorId === currentUserId || isAdmin" (click)="deleteTip(tip)">❌</button>
-    </div>
+    
+    <ng-container *ngFor="let tip of tips; let i = index; trackBy: trackById">
+      <div 
+        class="tip"
+        #tipCard
+        [ngClass]="{ 'visible': visibleTips[tip.id!], 'downward': tip.justAdded || i < 3 }"
+        [attr.data-id]="tip.id">
+        <h3>{{ tip.title }}</h3>
+        <p>{{ tip.content }}</p>
+        <small>{{ authorMap[tip.authorId] }} </small>
+        <small *ngIf="tip.createdAt">{{ tip.createdAt.toDate() | date:'medium' }}</small>
+        <button *ngIf="tip.authorId === currentUserId || isAdmin" (click)="deleteTip(tip)">❌</button>
+      </div>
+    </ng-container>
 </div>

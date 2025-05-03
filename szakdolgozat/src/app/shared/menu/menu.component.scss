@@ -187,6 +187,10 @@
   }
 }
 
+.logout-link {
+  cursor: pointer;
+}
+
 @media (max-width: 768px) {
   .navbar {
     flex-wrap: nowrap;

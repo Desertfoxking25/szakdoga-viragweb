@@ -43,11 +43,18 @@ export class ProductDetailComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    const slug = this.route.snapshot.paramMap.get('slug');
-    if (!slug) return;
+    this.route.paramMap.subscribe(params => {
+      const slug = params.get('slug');
+      if (slug) {
+        this.loadProduct(slug);
+      }
+    });
+  }
 
+  private async loadProduct(slug: string) {
     this.productService.getProductBySlug(slug).subscribe(async product => {
       if (!product) return;
+  
       this.product = product;
   
       gtag('event', 'view_item', {
@@ -59,7 +66,7 @@ export class ProductDetailComponent implements OnInit {
           price: product.price
         }]
       });
-      
+  
       const user = this.auth.currentUser;
       if (user) {
         this.userId = user.uid;
@@ -69,23 +76,8 @@ export class ProductDetailComponent implements OnInit {
           this.userReviewText = existing.reviewText || '';
         }
       }
-
-      this.ratingService.getRatingsByProduct(product.id!).subscribe((ratings: Rating[]) => {
-        this.ratingCount = ratings.length;
-        this.ratings = ratings
-          .sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis())
-          .slice(0, 3);
-        const total = ratings.reduce((sum, r) => sum + r.stars, 0);
-        this.averageRating = total / (ratings.length || 1);
-
-        ratings.forEach(rating => {
-          if (!this.authorMap[rating.userId]) {
-            this.userService.getUserProfile(rating.userId).subscribe(profile => {
-              this.authorMap[rating.userId] = `${profile.lastname} ${profile.firstname}`;
-            });
-          }
-        });
-      });
+  
+      this.loadRatings(product.id!);
     });
   }
   

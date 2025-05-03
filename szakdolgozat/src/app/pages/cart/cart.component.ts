@@ -8,6 +8,7 @@ import { Timestamp } from '@firebase/firestore';
 import { UserService } from '../../shared/services/user.service';
 import { UserProfile } from '../../shared/models/user.model';
 import emailjs from 'emailjs-com';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 declare let gtag: Function;
 
@@ -23,7 +24,7 @@ export class CartComponent implements OnInit {
   userId: string= '';
   showModal: boolean = false;
 
-  constructor(private cartService: CartService, private auth: Auth, private orderService: OrderService, private userService: UserService) {}
+  constructor(private cartService: CartService, private auth: Auth, private orderService: OrderService, private userService: UserService, private snackBar: MatSnackBar) {}
 
   async ngOnInit() {
     const user = this.auth.currentUser;
@@ -53,6 +54,12 @@ export class CartComponent implements OnInit {
       const confirmed = confirm(`Biztosan törlöd a(z) "${item.name}" terméket a kosaradból?`);
       if (confirmed) {
         await this.cartService.removeFromCart(this.userId, item.productId);
+        this.snackBar.open(`✅ ${item.name} termék törölve.`, 'Bezárás', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom',
+          panelClass: ['snackbar-success']
+        });
       } else {
         item.quantity = originalQuantity;
       }
@@ -66,6 +73,12 @@ export class CartComponent implements OnInit {
     if (!this.userId) return;
     await this.cartService.removeFromCart(this.userId, item.productId);
     this.cartItems = await this.cartService.getCart(this.userId);
+    this.snackBar.open(`✅ ${item.name} termék törölve.`, 'Bezárás', {
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+      panelClass: ['snackbar-success']
+    });
   }
 
   async handleOrderConfirm(data: { name: string; email: string; phone: string; address: string; save: boolean }) {
@@ -98,6 +111,7 @@ export class CartComponent implements OnInit {
     
     this.cartItems = [];
     this.showModal = false;
+    document.body.style.overflow = 'auto';
 
     if (data.save) {
       const profile: UserProfile = {
@@ -110,7 +124,13 @@ export class CartComponent implements OnInit {
       };
       await this.userService.updateUserProfile(profile);
     }
-    alert('Rendelés sikeresen leadva!');
+    
+    this.snackBar.open('Rendelés sikeresen leadva!', 'Bezárás', {
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+      panelClass: ['snackbar-success']
+    });
   }
 
   sendConfirmationEmail(order: Order, userEmail: string) {
@@ -133,5 +153,15 @@ export class CartComponent implements OnInit {
       }, (error) => {
         console.error('Email küldési hiba:', error);
       });
+  }
+
+  openModal() {
+    this.showModal = true;
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeModal() {
+    this.showModal = false;
+    document.body.style.overflow = 'auto';
   }
 }

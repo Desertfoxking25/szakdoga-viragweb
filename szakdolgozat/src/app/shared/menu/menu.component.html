@@ -36,27 +36,27 @@
     <ul *ngIf="isAdminChecked"  [ngClass]="{ 'dropdown-menu': true, 'open': isMenuOpen }">
       <ng-container *ngIf="!isLoggedIn">
         <li><span class="material-icons">login</span> <a routerLink="/authentication" (click)="closeMenu()">Bejelentkezés</a></li>
-        <li><span class="material-icons">login</span> <a routerLink="/products/discounts" (click)="closeMenu()">Akciók</a></li>
-        <li><span class="material-icons">login</span> <a routerLink="/products/features" (click)="closeMenu()">Újdonságok</a></li>
-        <li><span class="material-icons">login</span> <a routerLink="/cart" (click)="closeMenu()">Kosár</a></li>
-        <li><span class="material-icons">login</span> <a routerLink="/tips" (click)="closeMenu()">Kertészeti tippek</a></li>
-        <li><span class="material-icons">login</span> <a routerLink="/faq" (click)="closeMenu()">GYIK</a></li>
+        <li><span class="material-icons">percent</span> <a routerLink="/products/discounts" (click)="closeMenu()">Akciók</a></li>
+        <li><span class="material-icons">star</span> <a routerLink="/products/features" (click)="closeMenu()">Újdonságok</a></li>
+        <li><span class="material-icons">shopping_cart</span> <a routerLink="/cart" (click)="closeMenu()">Kosár</a></li>
+        <li><span class="material-icons">forum</span> <a routerLink="/tips" (click)="closeMenu()">Kertészeti tippek</a></li>
+        <li><span class="material-icons">question_mark</span> <a routerLink="/faq" (click)="closeMenu()">GYIK</a></li>
       </ng-container>
       <ng-container *ngIf="isLoggedIn">
         <ng-container *ngIf="isAdmin; else normalUserMenu">
-          <li><span class="material-icons">login</span> <a routerLink="/admin/products" (click)="closeMenu()">Termékek</a></li>
-          <li><span class="material-icons">login</span> <a routerLink="/admin/orders" (click)="closeMenu()">Rendelések</a></li>
-          <li><span class="material-icons">login</span> <a routerLink="/tips" (click)="closeMenu()">Kertészeti tippek</a></li>
-          <li><span class="material-icons">login</span> <a (click)="logout(); closeMenu()">Kijelentkezés</a></li>
+          <li><span class="material-icons">storefront</span> <a routerLink="/admin/products" (click)="closeMenu()">Termékek</a></li>
+          <li><span class="material-icons">local_shipping</span> <a routerLink="/admin/orders" (click)="closeMenu()">Rendelések</a></li>
+          <li><span class="material-icons">forum</span> <a routerLink="/tips" (click)="closeMenu()">Kertészeti tippek</a></li>
+          <li><span class="material-icons">logout</span> <a class="logout-link" (click)="logout(); closeMenu()">Kijelentkezés</a></li>
         </ng-container>
         <ng-template #normalUserMenu>
-          <li><span class="material-icons">login</span> <a routerLink="/profile" (click)="closeMenu()">Profilom</a></li>
-          <li><span class="material-icons">login</span> <a routerLink="/products/discounts" (click)="closeMenu()">Akciók</a></li>
-          <li><span class="material-icons">login</span> <a routerLink="/products/features" (click)="closeMenu()">Újdonságok</a></li>
-          <li><span class="material-icons">login</span> <a routerLink="/cart" (click)="closeMenu()">Kosár</a></li>
-          <li><span class="material-icons">login</span> <a routerLink="/tips" (click)="closeMenu()">Kertészeti tippek</a></li>
-          <li><span class="material-icons">login</span> <a routerLink="/faq" (click)="closeMenu()">GYIK</a></li>
-          <li><span class="material-icons">login</span> <a (click)="logout(); closeMenu()">Kijelentkezés</a></li>
+          <li><span class="material-icons">person</span> <a routerLink="/profile" (click)="closeMenu()">Profilom</a></li>
+          <li><span class="material-icons">percent</span> <a routerLink="/products/discounts" (click)="closeMenu()">Akciók</a></li>
+          <li><span class="material-icons">star</span> <a routerLink="/products/features" (click)="closeMenu()">Újdonságok</a></li>
+          <li><span class="material-icons">shopping_cart</span> <a routerLink="/cart" (click)="closeMenu()">Kosár</a></li>
+          <li><span class="material-icons">forum</span> <a routerLink="/tips" (click)="closeMenu()">Kertészeti tippek</a></li>
+          <li><span class="material-icons">question_mark</span> <a routerLink="/faq" (click)="closeMenu()">GYIK</a></li>
+          <li><span class="material-icons">logout</span> <a class="logout-link" (click)="logout(); closeMenu()">Kijelentkezés</a></li>
         </ng-template>
       </ng-container>
     </ul>

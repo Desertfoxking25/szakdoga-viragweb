@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, collectionData, addDoc, deleteDoc, doc, query, orderBy, Timestamp } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, addDoc, deleteDoc, doc, query, orderBy, Timestamp, DocumentReference } from '@angular/fire/firestore';
 import { Tip } from '../models/tip.model';
 import { Observable } from 'rxjs';
 
@@ -14,12 +14,12 @@ export class TipService {
     return collectionData(tipRef, { idField: 'id' }) as Observable<Tip[]>;
   }
 
-  addTip(tip: Tip): Promise<void> {
+  addTip(tip: Tip): Promise<DocumentReference> {
     const tipRef = collection(this.firestore, 'tips');
     return addDoc(tipRef, {
       ...tip,
       createdAt: Timestamp.now()
-    }).then(() => {});
+    });
   }
 
   deleteTip(id: string): Promise<void> {

@@ -2,7 +2,7 @@
   *ngIf="showModal"
   [total]="total"
   [userId]="userId"
-  (close)="showModal = false"
+  (close)="closeModal()"
   (confirm)="handleOrderConfirm($event)"
 ></app-order-modal>
 
@@ -27,7 +27,7 @@
     </div>
 
     <div *ngIf="cartItems.length > 0" class="checkout">
-      <button (click)="showModal = true">🛒 Rendelés leadása</button>
+      <button (click)="openModal()">🛒 Rendelés leadása</button>
     </div>
 </div>
   

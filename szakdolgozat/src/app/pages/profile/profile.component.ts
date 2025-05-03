@@ -31,5 +31,6 @@ export class ProfileComponent implements OnInit {
   logout() {
     const auth = getAuth();
     auth.signOut();
+    this.router.navigate(['/']);
   }
 }

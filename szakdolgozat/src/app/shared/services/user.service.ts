@@ -1,13 +1,36 @@
 import { Injectable } from '@angular/core';
 import { Firestore, doc, docData, setDoc, getDoc } from '@angular/fire/firestore';
 import { UserProfile } from '../models/user.model';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { Auth, onAuthStateChanged } from '@angular/fire/auth';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  constructor(private firestore: Firestore) {}
+  private adminSubject = new BehaviorSubject<boolean>(false);
+  admin$: Observable<boolean> = this.adminSubject.asObservable();  
+
+  constructor(private firestore: Firestore, private auth: Auth) {
+    onAuthStateChanged(this.auth, (user) => {
+      if (user) {
+        const userRef = doc(this.firestore, 'users', user.uid);
+        docData(userRef).subscribe((data: any) => {
+          this.adminSubject.next(data?.admin === true);
+        });
+      } else {
+        this.adminSubject.next(false);
+      }
+    });
+  }
+
+  setIsAdmin(value: boolean) {
+    this.adminSubject.next(value);
+  }
+
+  getIsAdmin(): boolean {
+    return this.adminSubject.value;
+  }
 
   getUserById(uid: string): Observable<any> {
     const userDoc = doc(this.firestore, `users/${uid}`);

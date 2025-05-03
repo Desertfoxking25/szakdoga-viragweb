@@ -1,4 +1,4 @@
-<div class="profile-edit-container">
+<div class="profile-edit-container" [ngClass]="{ 'visible': visible, 'closing': isClosing }">
     <h2>Profil szerkesztése</h2>
   
     <form (ngSubmit)="saveProfile()">

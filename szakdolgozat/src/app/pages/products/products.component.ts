@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Auth } from '@angular/fire/auth';
 import { CartService } from '../../shared/services/cart.service';
 import { FilterPanelComponent } from './filter-panel/filter-panel.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 declare let gtag: Function;
 
@@ -33,7 +34,8 @@ export class ProductsComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private cartService: CartService,
-    private auth: Auth
+    private auth: Auth,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -172,7 +174,12 @@ export class ProductsComponent implements OnInit {
   async addToCart(product: Product, index: number, event?: MouseEvent) {
     const user = this.auth.currentUser;
     if (!user) {
-      alert('Kérlek, jelentkezz be a kosár használatához!');
+      this.snackBar.open('❌ Kérlek, jelentkezz be a kosár használatához!', 'Bezárás', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'bottom',
+        panelClass: ['snackbar-error']
+      });
       return;
     }
   

@@ -10,6 +10,7 @@ import { FaqService } from '../../shared/services/faq.service';
 })
 export class FaqComponent implements OnInit {
   faqs: Faq[] = [];
+  expandedIndex: number | null = null;
 
   constructor(private faqService: FaqService) {}
 
@@ -17,5 +18,9 @@ export class FaqComponent implements OnInit {
     this.faqService.getFaqs().subscribe(data => {
       this.faqs = data;
     });
+  }
+  
+  toggle(index: number) {
+    this.expandedIndex = this.expandedIndex === index ? null : index;
   }
 }

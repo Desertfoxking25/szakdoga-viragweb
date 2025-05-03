@@ -30,20 +30,15 @@ export class MenuComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.auth.onAuthStateChanged(user => {
-      if (user) {
-        this.isLoggedIn = true;
-        this.userService.getUserProfile(user.uid).subscribe(userData => {
-          this.isAdmin = userData?.admin === true;
-          this.isAdminChecked = true; 
-        });
-      } else {
-        this.isLoggedIn = false;
-        this.isAdmin = false;
-        this.isAdminChecked = true;
-      }
+    onAuthStateChanged(this.auth, (user) => {
+      this.isLoggedIn = !!user;
+      this.isAdminChecked = true;
     });
-
+  
+    this.userService.admin$.subscribe(isAdmin => {
+      this.isAdmin = isAdmin;
+    });
+  
     document.addEventListener('click', (event) => {
       this.handleDocumentClick(event);
     });
@@ -153,7 +148,10 @@ export class MenuComponent implements OnInit {
   }
 
   goToProduct(product: Product) {
-    this.router.navigate(['/product', product.slug]);
+    const slug = product.slug;
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigate(['/products', slug]);
+    });
     this.searchTerm = '';
     this.suggestions = [];
   }

@@ -4,6 +4,7 @@ import { UserProfile } from '../../../shared/models/user.model';
 import { UserService } from '../../../shared/services/user.service';
 import { doc, Firestore, getDoc } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-profile-edit',
@@ -20,8 +21,10 @@ export class ProfileEditComponent implements OnInit {
     phone: '',
     address: ''
   };
+  visible = false;
+  isClosing = false;
 
-  constructor(private userService: UserService, private auth: Auth, private firestore: Firestore, private router: Router) {}
+  constructor(private userService: UserService, private auth: Auth, private firestore: Firestore, private router: Router, private snackBar: MatSnackBar) {}
 
   ngOnInit(): void {
     const user = this.auth.currentUser;
@@ -30,6 +33,10 @@ export class ProfileEditComponent implements OnInit {
         this.profile = data;
       });
     }
+
+    setTimeout(() => {
+      this.visible = true;
+    }, 10);
   }
 
   async saveProfile() {
@@ -51,11 +58,21 @@ export class ProfileEditComponent implements OnInit {
     };
   
     await this.userService.updateUserProfile(updated as UserProfile);
-    alert('Profil sikeresen frissítve!');
+    this.snackBar.open('✅ Profil frissitve!', 'Bezárás', {
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+      panelClass: ['snackbar-success']
+    });
     location.reload();
   }
 
   goBack() {
-    this.router.navigate(['/profile']);
+    this.isClosing = true;
+    this.visible = false;
+
+    setTimeout(() => {
+      this.router.navigate(['/profile']);
+    }, 300);
   }
 }

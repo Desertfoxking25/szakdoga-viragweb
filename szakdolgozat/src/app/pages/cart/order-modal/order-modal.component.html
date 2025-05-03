@@ -1,5 +1,5 @@
-<div class="modal-backdrop" (click)="close.emit()"></div>
-<div class="modal-content">
+<div class="modal-backdrop" (click)="closeWithAnimation()"></div>
+<div class="modal-content" [ngClass]="{ 'show': modalVisible }">
   <h2>Rendelés összegzése</h2>
 
   <form #orderForm="ngForm" (ngSubmit)="submitOrder(orderForm)" class="order-form">
@@ -32,7 +32,7 @@
 
     <div class="actions">
       <button type="submit">Rendelés megerősítése</button>
-      <button type="button" (click)="close.emit()">Mégse</button>
+      <button type="button" (click)="closeWithAnimation()">Mégse</button>
     </div>
   </form>
 </div>

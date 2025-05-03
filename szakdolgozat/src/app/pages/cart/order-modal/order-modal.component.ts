@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { UserService } from '../../../shared/services/user.service';
 import { UserProfile } from '../../../shared/models/user.model';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-order-modal',
@@ -19,8 +20,10 @@ export class OrderModalComponent implements OnInit{
   phone: string = '';
   address: string = '';
   save: boolean = false;
+  modalVisible = false;
+  isClosing = false;
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService, private snackBar: MatSnackBar) {}
 
   
   ngOnInit(): void {
@@ -32,11 +35,19 @@ export class OrderModalComponent implements OnInit{
         this.address = profile.address || '';
       });
     }
+    setTimeout(() => {
+      this.modalVisible = true;
+    }, 10);
   }
 
   submitOrder(form: any) {
     if (form.invalid) {
-      alert('Kérlek, tölts ki minden mezőt!');
+      this.snackBar.open('⚠️ Kérlek tölts ki minden mezőt!', 'Bezárás', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'bottom',
+        panelClass: ['snackbar-error']
+      });
       return;
     }
     
@@ -47,5 +58,10 @@ export class OrderModalComponent implements OnInit{
       address: this.address,
       save: this.save
     });
+  }
+
+  closeWithAnimation() {
+    this.modalVisible = false;
+    setTimeout(() => this.close.emit(), 300);
   }
 }

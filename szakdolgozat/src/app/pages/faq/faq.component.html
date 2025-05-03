@@ -1,7 +1,18 @@
 <div class="faq-container">
-    <h2>Gyakori kérdések</h2>
-    <div class="faq-item" *ngFor="let faq of faqs">
-      <h3>{{ faq.answer }}</h3>
-      <p>{{ faq.question }}</p>
+  <h2>Gyakori kérdések</h2>
+  <div 
+    class="faq-item" 
+    *ngFor="let faq of faqs; let i = index" 
+    [class.open]="expandedIndex === i"
+  >
+    <div class="faq-question" (click)="toggle(i)">
+      <span>{{ faq.question }}</span>
+      <div class="icon-wrapper" [class.rotated]="expandedIndex === i">
+        <i class='bx bx-chevron-down arrow-icon'></i>
+      </div>
     </div>
+    <div class="faq-answer">
+      {{ faq.answer }}
+    </div>
+  </div>
 </div>
