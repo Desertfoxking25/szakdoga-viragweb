@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, User } from '@angular/fire/auth';
-import { Firestore, doc, setDoc } from '@angular/fire/firestore';
+import { Firestore, doc, getDoc, setDoc } from '@angular/fire/firestore';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { Router } from '@angular/router';
 import { UserService } from '../../shared/services/user.service';
@@ -82,7 +82,24 @@ export class AuthenticationComponent {
   googleLogin(): void {
     const provider = new GoogleAuthProvider();
     signInWithPopup(this.auth, provider)
-      .then(result => {
+      .then(async result => {
+        const user = result.user;
+        const userDocRef = doc(this.firestore, 'users', user.uid);
+        const docSnap = await getDoc(userDocRef);
+
+        if (!docSnap.exists()) {
+          await setDoc(userDocRef, {
+            uid: user.uid,
+            email: user.email,
+            firstname: user.displayName?.split(' ')[0] || '',
+            lastname: user.displayName?.split(' ')[1] || '',
+            phone: '',
+            address: '',
+            avatarUrl: user.photoURL || '',
+            admin: false
+          });
+        }
+
         console.log('Google bejelentkezés sikeres:', result.user);
         this.snackBar.open('✅ Sikeres bejelentkezés!', 'Bezárás', {
           duration: 3000,

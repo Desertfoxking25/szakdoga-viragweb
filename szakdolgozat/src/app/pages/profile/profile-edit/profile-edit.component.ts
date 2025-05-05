@@ -64,7 +64,7 @@ export class ProfileEditComponent implements OnInit {
       verticalPosition: 'bottom',
       panelClass: ['snackbar-success']
     });
-    location.reload();
+    this.router.navigate(['/profile']);
   }
 
   goBack() {
