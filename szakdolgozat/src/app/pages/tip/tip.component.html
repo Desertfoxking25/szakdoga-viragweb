@@ -20,4 +20,11 @@
         <button *ngIf="tip.authorId === currentUserId || isAdmin" (click)="deleteTip(tip)">❌</button>
       </div>
     </ng-container>
+    
+    <button class="chat-toggle-btn" (click)="chatOpen = !chatOpen">💬</button>
+    <app-tip-assistant
+      *ngIf="chatOpen"
+      [messages]="chatMessages"
+      (messagesChange)="onMessagesChange($event)"
+    ></app-tip-assistant>
 </div>

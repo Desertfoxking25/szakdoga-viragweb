@@ -22,6 +22,9 @@ export class TipComponent implements OnInit, AfterViewChecked {
   currentUserId: string | null = null;
   isAdmin: boolean = false;
   visibleTips: { [id: string]: boolean } = {};
+  chatOpen = false;
+  chatMessages: { role: 'user' | 'assistant', content: string }[] = [];
+  chatStorageKey: string | null = null;
 
   constructor(private tipService: TipService, private userService: UserService, private auth: Auth, private snackBar: MatSnackBar) {}
 
@@ -29,13 +32,30 @@ export class TipComponent implements OnInit, AfterViewChecked {
     this.auth.onAuthStateChanged(user => {
       if (user) {
         this.currentUserId = user.uid;
+        this.chatStorageKey = `tip-chat-${user.uid}`;
+
+        const saved = localStorage.getItem(this.chatStorageKey);
+        if (saved) {
+          this.chatMessages = JSON.parse(saved);
+        }
+
         this.userService.getUserProfile(user.uid).subscribe(userData => {
           this.isAdmin = userData?.admin === true;
         });
+      }else {
+        this.currentUserId = null;
+        this.chatStorageKey = null;
       }
 
       this.loadTips();
     });
+  }
+
+  onMessagesChange(updated: { role: 'user' | 'assistant'; content: string }[]) {
+    this.chatMessages = updated;
+    if (this.chatStorageKey) {
+      localStorage.setItem(this.chatStorageKey, JSON.stringify(updated));
+    }
   }
 
   loadTips() {

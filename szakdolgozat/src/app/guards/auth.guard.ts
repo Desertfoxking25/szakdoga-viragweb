@@ -12,33 +12,34 @@ export class AuthGuard implements CanActivate {
 
   async canActivate(route: ActivatedRouteSnapshot): Promise<boolean> {
     const user = this.auth.currentUser;
-
     if (!user) {
       this.router.navigate(['/login']);
       return false;
     }
 
-    const requiresAdmin = route.data['requiresAdmin'] === true;
-
+    const requiresAdmin = route.data?.['requiresAdmin'] === true;
     if (requiresAdmin) {
-      try {
-        const userDoc = doc(this.firestore, `users/${user.uid}`);
-        const userData: any = await firstValueFrom(docData(userDoc));
-
-        if (userData?.admin === true) {
-          return true;
-        } else {
-          alert('Nincs jogosultságod az admin felülethez.');
-          this.router.navigate(['/']);
-          return false;
-        }
-      } catch (err) {
-        console.error('Hiba a jogosultság ellenőrzésénél:', err);
-        this.router.navigate(['/']);
-        return false;
-      }
+      return this.checkAdminAccess(user.uid);
     }
 
     return true;
+  }
+
+  async checkAdminAccess(uid: string): Promise<boolean> {
+    try {
+      const userDoc = doc(this.firestore, `users/${uid}`);
+      const userData: any = await firstValueFrom(docData(userDoc));
+      if (userData?.admin === true) {
+        return true;
+      } else {
+        alert('Nincs jogosultságod az admin felülethez.');
+        this.router.navigate(['/']);
+        return false;
+      }
+    } catch (err) {
+      console.error('Hiba a jogosultság ellenőrzésénél:', err);
+      this.router.navigate(['/']);
+      return false;
+    }
   }
 }

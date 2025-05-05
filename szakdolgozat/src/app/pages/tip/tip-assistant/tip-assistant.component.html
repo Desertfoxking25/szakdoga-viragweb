@@ -1,0 +1,21 @@
+<div class="chat-box">
+    <div class="chat-header">
+        🌿 AI Kert Asszisztens
+        <button class="clear-btn" (click)="clearChat()" title="Beszélgetés törlése">🗑️</button>
+    </div>
+    <div class="chat-messages">
+      <div *ngFor="let message of messages">
+        <div [class]="message.role">
+            <span class="bubble" [innerHTML]="formatMessage(message.content)"></span>
+        </div>
+      </div>
+      <div class="thinking" *ngIf="isThinking">
+        Gondolkodom<span class="dots"><span>.</span><span>.</span><span>.</span></span>
+      </div>
+      <div #bottom></div>
+    </div>
+    <form (ngSubmit)="sendMessage()">
+      <input [(ngModel)]="userInput" name="chat" placeholder="Írd be a kérdésed..." required />
+      <button type="submit" [disabled]="isThinking">➤</button>
+    </form>
+</div>
