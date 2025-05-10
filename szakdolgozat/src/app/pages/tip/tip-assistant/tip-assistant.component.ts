@@ -53,7 +53,7 @@ export class TipAssistantComponent implements AfterViewChecked {
       ]
     }, {
       headers: {
-        'Authorization': 'Bearer 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',
+        'Authorization': 'Bearer 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',
         'Content-Type': 'application/json'
       }
     }).subscribe(res => {
