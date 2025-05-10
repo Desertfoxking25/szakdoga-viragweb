@@ -118,7 +118,7 @@ export class CartComponent implements OnInit {
         uid: user.uid,
         lastname: data.name.split(' ')[0] || '',
         firstname: data.name.split(' ')[1] || '',
-        email: data.email,
+        email: user.email!,
         phone: data.phone,
         address: data.address
       };
