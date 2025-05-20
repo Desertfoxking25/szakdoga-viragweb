@@ -12,20 +12,41 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 declare let gtag: Function;
 
+/**
+ * Kosár oldal, ahol a felhasználó:
+ * - megtekintheti és szerkesztheti a kosár tartalmát,
+ * - megrendelést adhat le,
+ * - email visszaigazolást kap,
+ * - és frissítheti a profilját is a rendelési adatok alapján.
+ */
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.scss',
   standalone: false
 })
-
 export class CartComponent implements OnInit {
+
+  /** Kosárban lévő termékek */
   cartItems: CartItem[] = [];
-  userId: string= '';
+
+  /** Bejelentkezett felhasználó UID */
+  userId: string = '';
+
+  /** Rendelés megerősítő modal megjelenítése */
   showModal: boolean = false;
 
-  constructor(private cartService: CartService, private auth: Auth, private orderService: OrderService, private userService: UserService, private snackBar: MatSnackBar) {}
+  constructor(
+    private cartService: CartService,
+    private auth: Auth,
+    private orderService: OrderService,
+    private userService: UserService,
+    private snackBar: MatSnackBar
+  ) {}
 
+  /**
+   * Kosár betöltése bejelentkezett felhasználóhoz az oldal betöltésekor.
+   */
   async ngOnInit() {
     const user = this.auth.currentUser;
     if (user) {
@@ -34,10 +55,15 @@ export class CartComponent implements OnInit {
     }
   }
 
+  /** Teljes kosárérték számítása */
   get total() {
     return this.cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   }
 
+  /**
+   * Termék mennyiségének növelése.
+   * @param item A kosár elem
+   */
   async increaseQuantity(item: CartItem) {
     if (!this.userId) return;
     item.quantity++;
@@ -45,6 +71,10 @@ export class CartComponent implements OnInit {
     this.cartItems = await this.cartService.getCart(this.userId);
   }
 
+  /**
+   * Termék mennyiségének csökkentése vagy eltávolítása a kosárból.
+   * @param item A kosár elem
+   */
   async decreaseQuantity(item: CartItem) {
     if (!this.userId) return;
     const originalQuantity = item.quantity;
@@ -66,13 +96,19 @@ export class CartComponent implements OnInit {
     } else {
       await this.cartService.setQuantity(this.userId, item);
     }
+
     this.cartItems = await this.cartService.getCart(this.userId);
   }
 
+  /**
+   * Termék teljes eltávolítása a kosárból.
+   * @param item A törlendő termék
+   */
   async removeItem(item: CartItem) {
     if (!this.userId) return;
     await this.cartService.removeFromCart(this.userId, item.productId);
     this.cartItems = await this.cartService.getCart(this.userId);
+
     this.snackBar.open(`✅ ${item.name} termék törölve.`, 'Bezárás', {
       duration: 3000,
       horizontalPosition: 'center',
@@ -81,7 +117,22 @@ export class CartComponent implements OnInit {
     });
   }
 
-  async handleOrderConfirm(data: { name: string; email: string; phone: string; address: string; save: boolean }) {
+  /**
+   * Rendelés leadása:
+   * - mentés adatbázisba,
+   * - email küldés,
+   * - kosár törlés,
+   * - Analytics esemény,
+   * - profil frissítés, ha szükséges.
+   * @param data Vásárlói adatok (formból)
+   */
+  async handleOrderConfirm(data: {
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    save: boolean;
+  }) {
     const user = this.auth.currentUser;
     if (!user || this.cartItems.length === 0) return;
 
@@ -97,6 +148,7 @@ export class CartComponent implements OnInit {
     this.sendConfirmationEmail(order, data.email);
     await this.cartService.clearCart(user.uid);
 
+    // Google Analytics purchase esemény
     gtag('event', 'purchase', {
       transaction_id: Math.floor(Math.random() * 1000000),
       value: this.total,
@@ -108,11 +160,12 @@ export class CartComponent implements OnInit {
         quantity: item.quantity
       }))
     });
-    
+
     this.cartItems = [];
     this.showModal = false;
     document.body.style.overflow = 'auto';
 
+    // Profil frissítés a rendelési adatok alapján
     if (data.save) {
       const profile: UserProfile = {
         uid: user.uid,
@@ -124,7 +177,7 @@ export class CartComponent implements OnInit {
       };
       await this.userService.updateUserProfile(profile);
     }
-    
+
     this.snackBar.open('Rendelés sikeresen leadva!', 'Bezárás', {
       duration: 3000,
       horizontalPosition: 'center',
@@ -133,6 +186,11 @@ export class CartComponent implements OnInit {
     });
   }
 
+  /**
+   * Megrendelés visszaigazoló email küldése a megadott címre.
+   * @param order A leadott rendelés
+   * @param userEmail A vásárló email címe
+   */
   sendConfirmationEmail(order: Order, userEmail: string) {
     const templateParams = {
       order_id: Math.floor(Math.random() * 1000000),
@@ -146,7 +204,7 @@ export class CartComponent implements OnInit {
         image_url: item.imgUrl
       }))
     };
-  
+
     emailjs.send('service_flowerweb', 'template_orderConfirm', templateParams, 'K2v3Gv38p90y_3QWM')
       .then((response) => {
         console.log('Email elküldve!', response.status, response.text);
@@ -155,11 +213,13 @@ export class CartComponent implements OnInit {
       });
   }
 
+  /** Rendelési modal megnyitása */
   openModal() {
     this.showModal = true;
     document.body.style.overflow = 'hidden';
   }
 
+  /** Modal bezárása és scroll visszaállítása */
   closeModal() {
     this.showModal = false;
     document.body.style.overflow = 'auto';

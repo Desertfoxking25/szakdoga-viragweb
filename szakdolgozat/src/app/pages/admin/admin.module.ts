@@ -13,6 +13,7 @@ import { AdminRoutingModule } from './admin-routing.module';
 import { ProductAdminComponent } from './product-admin/product-admin.component';
 import { ProductFormComponent } from './product-admin/product-form/product-form.component';
 import { OrdersAdminComponent } from './orders-admin/orders-admin.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { OrdersAdminComponent } from './orders-admin/orders-admin.component';
     MatInputModule,
     MatCheckboxModule,
     MatSelectModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    MatProgressSpinnerModule
   ]
 })
 export class AdminModule { }

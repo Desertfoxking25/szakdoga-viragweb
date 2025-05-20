@@ -10,9 +10,15 @@ import { Auth } from '@angular/fire/auth';
 import { Timestamp } from 'firebase/firestore';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-
 declare let gtag: Function;
 
+/**
+ * Termék részletező oldal:
+ * - termék betöltése slug alapján
+ * - értékelések listázása, leadása, törlése
+ * - termék kosárba helyezése
+ * - Google Analytics esemény küldés
+ */
 @Component({
   selector: 'app-product-detail',
   templateUrl: './product-detail.component.html',
@@ -20,20 +26,41 @@ declare let gtag: Function;
   standalone: false
 })
 export class ProductDetailComponent implements OnInit {
+  /** A betöltött termék */
   product: Product | undefined = undefined;
+
+  /** Kosárba rakandó darabszám */
   quantity: number = 1;
+
+  /** Bejelentkezett felhasználó ID */
   userId: string | null = null;
+
+  /** Felhasználó korábban leadott értékelése (csillag) */
   userRating: number | null = null;
+
+  /** Felhasználó szöveges értékelése */
   userReviewText: string = '';
+
+  /** Termék átlagos értékelése */
   averageRating: number = 0;
+
+  /** Értékelések száma */
   ratingCount: number = 0;
+
+  /** Értékelések listája (legfeljebb 3) */
   ratings: Rating[] = [];
+
+  /** UID → név hozzárendelés az értékelésekhez */
   authorMap: { [uid: string]: string } = {};
+
+  /** Hover során használt átmeneti érték */
   hoveredRating: number = 0;
+
+  /** Math alias template használathoz */
   Math = Math;
 
   constructor(
-    private route: ActivatedRoute, 
+    private route: ActivatedRoute,
     private productService: ProductService,
     private cartService: CartService,
     private ratingService: RatingService,
@@ -42,6 +69,9 @@ export class ProductDetailComponent implements OnInit {
     private snackBar: MatSnackBar
   ) {}
 
+  /**
+   * Betölti a terméket slug alapján, figyeli az útvonalparamétert.
+   */
   async ngOnInit() {
     this.route.paramMap.subscribe(params => {
       const slug = params.get('slug');
@@ -51,12 +81,17 @@ export class ProductDetailComponent implements OnInit {
     });
   }
 
+  /**
+   * Termék lekérése a slug alapján + Google Analytics esemény küldése.
+   * Ha be van jelentkezve a felhasználó, betölti a saját értékelését is.
+   */
   private async loadProduct(slug: string) {
     this.productService.getProductBySlug(slug).subscribe(async product => {
       if (!product) return;
-  
+
       this.product = product;
-  
+
+      // Google Analytics esemény
       gtag('event', 'view_item', {
         currency: 'HUF',
         value: product.price,
@@ -66,7 +101,7 @@ export class ProductDetailComponent implements OnInit {
           price: product.price
         }]
       });
-  
+
       const user = this.auth.currentUser;
       if (user) {
         this.userId = user.uid;
@@ -76,11 +111,15 @@ export class ProductDetailComponent implements OnInit {
           this.userReviewText = existing.reviewText || '';
         }
       }
-  
+
       this.loadRatings(product.id!);
     });
   }
-  
+
+  /**
+   * Betölti a termékhez tartozó értékeléseket és kiszámolja az átlagot.
+   * Az első 3 értékelés jelenik meg, névvel kiegészítve.
+   */
   loadRatings(productId: string) {
     this.ratingService.getRatingsByProduct(productId).subscribe((ratings: Rating[]) => {
       this.ratingCount = ratings.length;
@@ -100,10 +139,15 @@ export class ProductDetailComponent implements OnInit {
     });
   }
 
+  /** Értékelés változtatása (hover / click alapján) */
   setUserRating(rating: number) {
     this.userRating = rating;
   }
 
+  /**
+   * Értékelés elküldése: csillag + szöveg mentése a Firestore-ba.
+   * Meglévő értékelés frissül.
+   */
   async submitRating() {
     if (!this.product || !this.userId || !this.userRating) return;
 
@@ -117,27 +161,30 @@ export class ProductDetailComponent implements OnInit {
 
     this.userReviewText = '';
     this.loadRatings(this.product.id!);
-    
+
     this.snackBar.open('Értékelésed mentve!', 'Bezárás', {
-      duration: 3000, 
+      duration: 3000,
       horizontalPosition: 'center',
       verticalPosition: 'bottom',
       panelClass: ['snackbar-success']
     });
   }
 
+  /**
+   * Értékelés törlése a felhasználó részéről.
+   */
   async deleteRating() {
     if (!this.userId || !this.product?.id) return;
 
     const confirmed = confirm('Biztosan törölni szeretnéd az értékelésed?');
     if (!confirmed) return;
-  
+
     await this.ratingService.deleteRating(this.userId, this.product.id);
-  
+
     this.userRating = null;
     this.userReviewText = '';
     this.loadRatings(this.product.id);
-  
+
     this.snackBar.open('Értékelés törölve.', 'Bezárás', {
       duration: 3000,
       horizontalPosition: 'center',
@@ -146,6 +193,11 @@ export class ProductDetailComponent implements OnInit {
     });
   }
 
+  /**
+   * Termék hozzáadása a kosárhoz a megadott mennyiséggel.
+   * Bejelentkezés szükséges.
+   * @param product A kosárba helyezendő termék
+   */
   async addToCart(product: Product) {
     const user = this.auth.currentUser;
     if (!user) {
@@ -157,7 +209,7 @@ export class ProductDetailComponent implements OnInit {
       });
       return;
     }
-  
+
     const item = {
       productId: product.id!,
       name: product.name,
@@ -165,7 +217,7 @@ export class ProductDetailComponent implements OnInit {
       imgUrl: product.imgUrl,
       quantity: this.quantity
     };
-  
+
     await this.cartService.addToCart(user.uid, item);
 
     this.snackBar.open('✅ Termék hozzáadva a kosárhoz!', 'Bezárás', {
@@ -178,10 +230,12 @@ export class ProductDetailComponent implements OnInit {
     this.quantity = 1;
   }
 
+  /** Kosár mennyiség növelése */
   increaseQuantity() {
     this.quantity++;
   }
-  
+
+  /** Kosár mennyiség csökkentése (minimum 1) */
   decreaseQuantity() {
     if (this.quantity > 1) {
       this.quantity--;

@@ -5,6 +5,10 @@ import { filter } from 'rxjs/operators';
 
 declare let gtag: Function;
 
+/**
+ * A root komponens, amely inicializálja a Google Analytics route trackinget
+ * és beállítja az auth session persistálását a böngésző munkamenetére.
+ */
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -12,8 +16,18 @@ declare let gtag: Function;
   standalone: false
 })
 export class AppComponent {
+  /** Alkalmazás címe (jelenleg nincs közvetlen használatban) */
   title = 'szakdolgozat';
+
+  /**
+   * Konstruktor, amely:
+   * - beköti a Google Analytics route figyelést,
+   * - beállítja a Firebase Auth session alapú persistálását.
+   * @param router Az Angular router szolgáltatás
+   */
   constructor(private router: Router) {
+
+    // Google Analytics oldalváltás esemény bekötése
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: NavigationEnd) => {
@@ -22,6 +36,7 @@ export class AppComponent {
       });
     });
 
+    // Firebase Auth session persistencia beállítása (kijelentkezik böngésző bezárásakor)
     const auth = getAuth();
     setPersistence(auth, browserSessionPersistence)
       .then(() => {

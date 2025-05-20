@@ -1,18 +1,27 @@
-<h2>Rendelések kezelése</h2>
-<div style="margin-bottom: 16px;">
-    <label for="statusFilter">Státusz szűrés:</label>
-    <select id="statusFilter" [(ngModel)]="statusFilter" (change)="applyFilter()">
-      <option value="all">Összes</option>
-      <option value="új">Új</option>
-      <option value="feldolgozás alatt">Feldolgozás alatt</option>
-      <option value="teljesítve">Teljesítve</option>
-    </select>
-    <label for="fromDate">Dátumtól:</label>
-    <input type="date" id="fromDate" [(ngModel)]="fromDate" (change)="applyFilter()" />
-  
-    <label for="toDate">Dátumig:</label>
-    <input type="date" id="toDate" [(ngModel)]="toDate" (change)="applyFilter()" />
+<div class="order-header">
+  <h2>Rendelések kezelése</h2>
+
+  <div class="filter-bar">
+    <div class="filter-group">
+      <label for="statusFilter">Státusz:</label>
+      <select id="statusFilter" [(ngModel)]="statusFilter" (change)="applyFilter()">
+        <option value="all">Összes</option>
+        <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="fromDate">Dátumtól:</label>
+      <input type="date" id="fromDate" [(ngModel)]="fromDate" (change)="applyFilter()" />
+    </div>
+
+    <div class="filter-group">
+      <label for="toDate">Dátumig:</label>
+      <input type="date" id="toDate" [(ngModel)]="toDate" (change)="applyFilter()" />
+    </div>
+  </div>
 </div>
+
 <table mat-table [dataSource]="filteredOrders" class="mat-elevation-z8">
 
     <ng-container matColumnDef="userId">

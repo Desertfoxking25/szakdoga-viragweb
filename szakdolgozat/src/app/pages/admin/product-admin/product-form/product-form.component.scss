@@ -1,0 +1,50 @@
+.product-form-content {
+  padding-top: 8px;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+.product-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 8px;
+
+  .full-width {
+    grid-column: span 2;
+  }
+
+  .checkbox-row {
+    grid-column: span 2;
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    margin-top: 4px;
+  }
+}
+
+.file-upload-wrapper {
+  margin-bottom: 16px;
+
+  input[type="file"] {
+    display: block;
+    margin-top: 4px;
+  }
+
+  .file-upload-label {
+    font-weight: 500;
+    margin-bottom: 4px;
+    display: block;
+  }
+}
+
+.spinner-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 0;
+}

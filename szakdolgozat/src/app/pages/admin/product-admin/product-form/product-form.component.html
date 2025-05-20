@@ -1,37 +1,51 @@
 <h2 mat-dialog-title>{{ data.mode === 'create' ? 'Új termék' : 'Termék szerkesztése' }}</h2>
-<mat-dialog-content>
-  <form>
-    <mat-form-field appearance="fill" class="w-100">
+
+<mat-dialog-content class="product-form-content">
+
+  <div class="spinner-wrapper" *ngIf="isSaving">
+    <mat-spinner diameter="30" color="accent"></mat-spinner>
+  </div>
+  
+  <form class="product-form-grid">
+    
+    <mat-form-field appearance="outline">
       <mat-label>Név</mat-label>
       <input matInput [(ngModel)]="product.name" name="name">
     </mat-form-field>
 
-    <mat-form-field appearance="fill" class="w-100">
+    <mat-form-field appearance="outline">
       <mat-label>Ár (Ft)</mat-label>
       <input type="number" matInput [(ngModel)]="product.price" name="price">
     </mat-form-field>
 
-    <mat-form-field appearance="fill" class="w-100">
+    <mat-form-field appearance="outline" class="full-width">
       <mat-label>Kategóriák (vesszővel)</mat-label>
       <input matInput [(ngModel)]="categoryString" name="category">
     </mat-form-field>
 
-    <mat-form-field appearance="fill" class="w-100">
+    <div class="file-upload-wrapper">
+      <label for="file-upload" class="file-upload-label">Kép feltöltése</label>
+      <input id="file-upload" type="file" (change)="onFileSelected($event)" />
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
       <mat-label>Kép URL</mat-label>
       <input matInput [(ngModel)]="product.imgUrl" name="imgUrl">
     </mat-form-field>
 
-    <mat-form-field appearance="fill" class="w-100">
+    <img *ngIf="product.imgUrl" [src]="product.imgUrl" alt="Előnézet" class="img-preview" />
+
+    <mat-form-field appearance="outline">
       <mat-label>Slug</mat-label>
       <input matInput [(ngModel)]="product.slug" name="slug">
     </mat-form-field>
 
-    <mat-form-field appearance="fill" class="w-100">
+    <mat-form-field appearance="outline" class="full-width">
       <mat-label>Leírás</mat-label>
-      <textarea matInput [(ngModel)]="product.description" name="description" rows="4"></textarea>
+      <textarea matInput [(ngModel)]="product.description" name="description" rows="3"></textarea>
     </mat-form-field>
 
-    <div style="display: flex; gap: 16px; margin-top: 16px;">
+    <div class="checkbox-row">
       <mat-checkbox [(ngModel)]="product.sales" name="sales">Akciós</mat-checkbox>
       <mat-checkbox [(ngModel)]="product.featured" name="featured">Kiemelt</mat-checkbox>
     </div>
@@ -40,5 +54,5 @@
 
 <mat-dialog-actions align="end">
   <button mat-button (click)="cancel()">Mégse</button>
-  <button mat-raised-button color="primary" (click)="save()">Mentés</button>
+  <button mat-raised-button color="primary" (click)="save()" [disabled]="isSaving">Mentés</button>
 </mat-dialog-actions>

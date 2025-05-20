@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 
+/**
+ * A főoldal komponens.
+ * Megjeleníti a növénykategóriákat képes kártyák formájában.
+ * Kezeli a képbetöltési állapotot az animációkhoz (pl. fade-in).
+ */
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
@@ -7,6 +12,11 @@ import { Component, OnInit } from '@angular/core';
   standalone: false
 })
 export class MainComponent implements OnInit {
+
+  /**
+   * Kategóriák listája, képekkel.
+   * Ezek jelennek meg a főoldalon kártyaként.
+   */
   categories = [
     {
       name: 'Évelők',
@@ -45,10 +55,17 @@ export class MainComponent implements OnInit {
 
   constructor() {}
 
+  /**
+   * Komponens inicializálásakor a betöltött képek tömbjét inicializálja.
+   */
   ngOnInit(): void {
     this.loadedImages = new Array(this.categories.length).fill(false);
   }
 
+  /**
+   * Ha egy kép betöltődött, frissíti a hozzá tartozó állapotot `true`-ra.
+   * @param index A betöltött kép indexe
+   */
   onImageLoad(index: number): void {
     this.loadedImages[index] = true;
   }

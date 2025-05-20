@@ -5,6 +5,10 @@ import { Product } from '../models/product.model';
 import { ProductService } from '../services/product.service';
 import { UserService } from '../services/user.service';
 
+/**
+ * Menü komponens, amely kezeli a navigációs menüt, overlay-t, admin/jogosultság figyelést,
+ * keresést terméknévre, és kijelentkezést.
+ */
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
@@ -12,23 +16,52 @@ import { UserService } from '../services/user.service';
   standalone: false
 })
 export class MenuComponent implements OnInit {
+   /** Menü nyitott állapota */
   isMenuOpen = false;
+
+  /** Overlay láthatósága */
   overlayVisible = false;
+
+  /** Be van-e jelentkezve a felhasználó */
   isLoggedIn = false;
+
+  /** Admin jogosultság állapota */
   isAdmin: boolean = false;
+
+  /** Megtörtént-e az admin jogosultság lekérése */
   isAdminChecked: boolean = false;
+
+  /** Firebase Auth referencia */
   private auth: Auth;
+
+  /** Keresősáv aktuális értéke */
   searchTerm: string = '';
+
+  /** Találati javaslatok a kereséshez */
   suggestions: Product[] = [];
  
-
-  constructor(private router: Router, private productService: ProductService, private route: ActivatedRoute, private userService: UserService) {
-    this.auth = inject(Auth); 
+  /**
+   * Konstruktor a szükséges szolgáltatások injectálásával.
+   * @param router Angular Router a navigációhoz
+   * @param productService Termékek lekérdezése kereséshez
+   * @param route Aktivált útvonal a query paraméterekhez
+   * @param userService Admin státusz figyelése
+   */
+  constructor(
+    private router: Router, 
+    private productService: ProductService, 
+    private route: ActivatedRoute, 
+    private userService: UserService
+  ) {
+    this.auth = inject(Auth); // AuthService injektálása új Angular módszerrel
     onAuthStateChanged(this.auth, (user) => {
       this.isLoggedIn = !!user;
     });
   }
 
+  /**
+   * Inicializáláskor beállítja az auth figyelést és az admin jogosultságot.
+   */
   ngOnInit(): void {
     onAuthStateChanged(this.auth, (user) => {
       this.isLoggedIn = !!user;
@@ -38,12 +71,17 @@ export class MenuComponent implements OnInit {
     this.userService.admin$.subscribe(isAdmin => {
       this.isAdmin = isAdmin;
     });
-  
+    
+    // Kattintás figyelése az oldalon kívülre
     document.addEventListener('click', (event) => {
       this.handleDocumentClick(event);
     });
   }
 
+  /**
+   * Kezeli a kattintásokat a dokumentumon, hogy bezárja a menüt vagy keresési javaslatokat.
+   * @param event Az egérkattintás eseménye
+   */
   handleDocumentClick(event: MouseEvent) {
     const target = event.target as HTMLElement;
     
@@ -61,6 +99,9 @@ export class MenuComponent implements OnInit {
     }
   }
 
+  /**
+   * Menü megnyitása vagy bezárása overlay-jel együtt.
+   */
   toggleMenu() {
     if (this.isMenuOpen) {
       this.isMenuOpen = false;
@@ -76,6 +117,9 @@ export class MenuComponent implements OnInit {
     }
   }
 
+  /**
+   * Menü bezárása külön hívásként (pl. navigáció után).
+   */
   closeMenu() {
     this.isMenuOpen = false;
     document.body.style.overflow = '';
@@ -85,6 +129,10 @@ export class MenuComponent implements OnInit {
     }, 400);
   }
 
+  /**
+   * Kijelentkezteti a felhasználót. Ha profiloldalon van, visszanavigál a főoldalra.
+   * Egyébként frissíti az aktuális URL-t.
+   */
   logout() {
     const currentUrl = this.router.url;
 
@@ -99,6 +147,9 @@ export class MenuComponent implements OnInit {
   });
   }
 
+  /**
+   * Keresési javaslatok frissítése gépelés közben.
+   */
   onSearchInput() {
     if (this.searchTerm.trim().length < 1) {
       this.suggestions = [];
@@ -112,6 +163,9 @@ export class MenuComponent implements OnInit {
     });
   }
 
+  /**
+   * Keresőmező fókuszba kerülésekor javaslatok frissítése.
+   */
   onSearchFocus() {
     if (this.searchTerm.trim().length > 0) {
       this.productService.getProducts().subscribe(products => {
@@ -123,6 +177,9 @@ export class MenuComponent implements OnInit {
     }
   }
   
+  /**
+   * Keresés beküldése. A keresett kifejezést a query paraméterekhez adja.
+   */
   onSearchSubmit() {
     if (this.searchTerm.trim().length > 0) {
       const currentParams = { ...this.route.snapshot.queryParams };
@@ -147,6 +204,10 @@ export class MenuComponent implements OnInit {
     }
   }
 
+  /**
+   * Termék kiválasztása keresési javaslatból → navigálás a termék oldalára.
+   * @param product A kiválasztott termék
+   */
   goToProduct(product: Product) {
     const slug = product.slug;
     this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {

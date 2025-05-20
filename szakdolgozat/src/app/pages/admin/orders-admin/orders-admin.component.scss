@@ -1,0 +1,40 @@
+.order-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 24px 0;
+
+  h2 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .filter-bar {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+
+      label {
+        font-weight: 500;
+        margin-bottom: 4px;
+      }
+
+      select,
+      input[type="date"] {
+        padding: 6px 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+        min-width: 180px;
+      }
+    }
+  }
+}
