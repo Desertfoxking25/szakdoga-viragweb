@@ -11,6 +11,7 @@ Telepítéshez előbb győződj meg róla, hogy az Angular CLI telepítve van:
 
 ```bash
 npm install -g @angular/cli
+```
 
 ## Telepítés
 
@@ -18,15 +19,18 @@ npm install -g @angular/cli
 
 ```bash
 git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY
+```
 
 - Függőségek telepítése:
 
 ```bash
 npm install
+```
 
 ## Alkalmazás futtatása fejlesztői módba, lokálisan
 
 ```bash
 ng serve
+```
 
 Ezután az alkalmazás elérhető lesz a következő címen: http://localhost:4200
